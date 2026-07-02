@@ -11,6 +11,13 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { Toaster } from "sonner";
+import "@fontsource/fraunces/400.css";
+import "@fontsource/fraunces/600.css";
+import "@fontsource/fraunces/700.css";
+import "@fontsource/nunito/400.css";
+import "@fontsource/nunito/600.css";
+import "@fontsource/nunito/700.css";
 
 function NotFoundComponent() {
   return (
@@ -121,6 +128,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      <Toaster position="top-center" richColors />
     </QueryClientProvider>
   );
 }
