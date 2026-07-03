@@ -53,7 +53,7 @@ function AuthPage() {
       const pw = passwordSchema.parse(password);
       if (mode === "signup") {
         const dn = nameSchema.parse(name);
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email: em,
           password: pw,
           options: {
@@ -62,6 +62,12 @@ function AuthPage() {
           },
         });
         if (error) throw error;
+        if (!data.session) {
+          // Email confirmation required — no session yet
+          toast.success("Check your email to confirm your account, then sign in.");
+          setMode("signin");
+          return;
+        }
         // Play sprout animation, then go to app
         setSproutFor({ name: dn });
       } else {
@@ -75,6 +81,7 @@ function AuthPage() {
       setBusy(false);
     }
   };
+
 
   return (
     <div className="relative min-h-screen overflow-hidden" style={{ background: "linear-gradient(180deg, var(--sky-soft), var(--canvas))" }}>
