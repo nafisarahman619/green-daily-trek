@@ -208,55 +208,51 @@ function SproutCelebration({ name, onDone }: { name: string; onDone: () => void 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center"
-      style={{ background: "linear-gradient(180deg, var(--sky-day-a), var(--canvas))" }}
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden"
+      style={{ background: "linear-gradient(180deg, var(--sky-day-a) 0%, var(--sky-soft) 50%, var(--canvas-warm) 100%)" }}
     >
+      {/* Sun */}
+      <div
+        style={{
+          position: "absolute",
+          top: "14%",
+          right: "18%",
+          width: 90,
+          height: 90,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, oklch(0.98 0.12 90), oklch(0.85 0.14 75))",
+          boxShadow: "0 0 80px oklch(0.95 0.14 70 / 0.55)",
+        }}
+      />
 
-      <div className="relative flex flex-col items-center">
-        {/* Falling seed */}
-        <motion.div
-          initial={{ y: -220, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.9, ease: "easeIn" }}
-          style={{
-            width: 20, height: 26,
-            background: "oklch(0.5 0.09 55)",
-            borderRadius: "40% 40% 50% 50%",
-          }}
-        />
-        {/* Sprout */}
-        <motion.div
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 1.1, type: "spring", stiffness: 160 }}
-          style={{ marginTop: -20 }}
-        >
-          <Tree stage="sapling" />
-        </motion.div>
-        {/* Leaf confetti */}
+      <SeedToSprout size={300} duration={2.6} />
+
+      {/* Leaf confetti — falls from above, drifting past the sprout */}
+      <div className="pointer-events-none absolute inset-0">
         {Array.from({ length: 14 }).map((_, i) => (
           <span
             key={i}
             className="leaf-fall absolute"
             style={{
-              top: -20,
-              left: `${(i * 23) % 100 - 50}%`,
+              top: "20%",
+              left: `${40 + ((i * 23) % 20) - 10 + (i % 2 ? 3 : -3)}%`,
               width: 10,
               height: 6,
               background: i % 2 ? "var(--pistachio)" : "var(--fern-glow)",
               borderRadius: "50% 10% 50% 10%",
-              animationDelay: `${1.4 + (i % 5) * 0.15}s`,
+              animationDelay: `${1.8 + (i % 5) * 0.15}s`,
               // @ts-ignore
               "--fx": `${(i % 2 ? -1 : 1) * (30 + i * 10)}px`,
             }}
           />
         ))}
       </div>
+
       <motion.p
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.6 }}
-        className="mt-10 display text-2xl"
+        transition={{ delay: 1.9 }}
+        className="mt-8 display text-2xl"
         style={{ color: "var(--delft-deep)" }}
       >
         Welcome, {name} 🌱
@@ -264,7 +260,7 @@ function SproutCelebration({ name, onDone }: { name: string; onDone: () => void 
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.9 }}
+        transition={{ delay: 2.2 }}
         className="mt-2 text-sm"
         style={{ color: "var(--ink-soft)" }}
       >
