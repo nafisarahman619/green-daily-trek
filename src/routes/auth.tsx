@@ -199,6 +199,10 @@ function GoogleG() {
 }
 
 function SproutCelebration({ name, onDone }: { name: string; onDone: () => void }) {
+  useEffect(() => {
+    const t = setTimeout(onDone, 3200);
+    return () => clearTimeout(t);
+  }, [onDone]);
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -206,8 +210,8 @@ function SproutCelebration({ name, onDone }: { name: string; onDone: () => void 
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex flex-col items-center justify-center"
       style={{ background: "linear-gradient(180deg, var(--sky-day-a), var(--canvas))" }}
-      onAnimationComplete={() => setTimeout(onDone, 2600)}
     >
+
       <div className="relative flex flex-col items-center">
         {/* Falling seed */}
         <motion.div
