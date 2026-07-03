@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
@@ -53,7 +53,7 @@ function AuthPage() {
       const pw = passwordSchema.parse(password);
       if (mode === "signup") {
         const dn = nameSchema.parse(name);
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email: em,
           password: pw,
           options: {
@@ -62,6 +62,12 @@ function AuthPage() {
           },
         });
         if (error) throw error;
+        if (!data.session) {
+          // Email confirmation required — no session yet
+          toast.success("Check your email to confirm your account, then sign in.");
+          setMode("signin");
+          return;
+        }
         // Play sprout animation, then go to app
         setSproutFor({ name: dn });
       } else {
@@ -75,6 +81,7 @@ function AuthPage() {
       setBusy(false);
     }
   };
+
 
   return (
     <div className="relative min-h-screen overflow-hidden" style={{ background: "linear-gradient(180deg, var(--sky-soft), var(--canvas))" }}>
@@ -192,6 +199,10 @@ function GoogleG() {
 }
 
 function SproutCelebration({ name, onDone }: { name: string; onDone: () => void }) {
+  useEffect(() => {
+    const t = setTimeout(onDone, 3200);
+    return () => clearTimeout(t);
+  }, [onDone]);
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -199,8 +210,8 @@ function SproutCelebration({ name, onDone }: { name: string; onDone: () => void 
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex flex-col items-center justify-center"
       style={{ background: "linear-gradient(180deg, var(--sky-day-a), var(--canvas))" }}
-      onAnimationComplete={() => setTimeout(onDone, 2600)}
     >
+
       <div className="relative flex flex-col items-center">
         {/* Falling seed */}
         <motion.div
