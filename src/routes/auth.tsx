@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { Tree } from "@/components/forest/Tree";
+import { SeedToSprout } from "@/components/forest/SeedToSprout";
 import { Leaf, Mail, Lock, User } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
