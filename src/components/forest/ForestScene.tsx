@@ -64,25 +64,25 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
   const trees = useMemo(() => {
     const rng = mulberry32(1337);
     const all: { x: number; base: number; s: number; stage: ForestHealth["stage"]; z: number; sway: number }[] = [];
-    // Back row (far, small, high on horizon)
+    // Back row (far, smaller, high on horizon)
     for (let i = 0; i < 18; i++) {
       const x = 2 + (i * 5.7 + rng() * 3) % 96;
-      const base = 26 + rng() * 8; // higher = farther
-      const s = 0.42 + rng() * 0.18;
+      const base = 26 + rng() * 8;
+      const s = 0.65 + rng() * 0.22;
       all.push({ x, base, s, stage: downStage(downStage(health.stage)), z: 10 + Math.floor(base), sway: rng() });
     }
     // Mid row
     for (let i = 0; i < 18; i++) {
       const x = 1 + (i * 6.1 + rng() * 4) % 98;
       const base = 14 + rng() * 12;
-      const s = 0.65 + rng() * 0.25;
+      const s = 1.0 + rng() * 0.35;
       all.push({ x, base, s, stage: downStage(health.stage), z: 40 + Math.floor((30 - base) * 2), sway: rng() });
     }
     // Front row (large, low)
     for (let i = 0; i < 14; i++) {
       const x = -2 + (i * 7.5 + rng() * 5) % 104;
       const base = 2 + rng() * 10;
-      const s = 0.95 + rng() * 0.35;
+      const s = 1.45 + rng() * 0.5;
       all.push({ x, base, s, stage: health.stage, z: 80 + Math.floor((15 - base) * 3), sway: rng() });
     }
     // Filter: no trees on pond area
@@ -136,6 +136,8 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
         background: skyGradient,
         aspectRatio: compact ? "16 / 9" : "16 / 10",
         boxShadow: "var(--shadow-card), var(--shadow-inner-warm)",
+        isolation: "isolate",
+        contain: "paint",
       }}
     >
       {/* Sun / moon */}
@@ -261,7 +263,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
         {trees.map((t, i) => {
           // Convert base (percent of scene height) to percent of ground layer height
           const bottomPct = (t.base / GROUND_TOP) * 100;
-          const isFar = t.s < 0.6;
+          const isFar = t.s < 0.9;
           return (
             <div
               key={`tr-${i}`}
