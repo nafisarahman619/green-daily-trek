@@ -52,7 +52,7 @@ export const DAILY_BASELINE_KG = 4;
 export interface ForestHealth {
   score: number;           // 0..100
   stage: "seedling" | "sapling" | "young" | "mature";
-  treeCount: number;       // 1..9
+  treeCount: number;       // 2..48
   isStorm: boolean;        // recent bad-day pattern
   streakGoodDays: number;
 }
