@@ -19,7 +19,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
 
-  // Subtle mouse parallax
+  // Subtle mouse parallax (background only — foreground stays anchored to ground)
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -53,36 +53,80 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
   // Ground plane sits at GROUND_TOP % from bottom. All trees/plants anchor here.
   const GROUND_TOP = 36; // percent (matches ground layer height)
 
-  // Deterministic scattered positions. All bottom values <= GROUND_TOP so bases sit on/in grass.
+  // Pond geometry (percent, in scene coordinates). Flowers/grass must avoid this rect.
+  const POND = { left: 58, right: 92, bottomMin: 4, bottomMax: 14 };
+
+  const inPond = (x: number, base: number) =>
+    x >= POND.left - 2 && x <= POND.right + 2 && base >= POND.bottomMin - 1 && base <= POND.bottomMax + 2;
+
+  // Deterministic dense forest — up to ~50 trees, back rows smaller (depth).
+  // Each tree gets its own x, base (from ground), scale, and stage bias.
   const trees = useMemo(() => {
-    const positions = [
-      { x: 14, base: 30, s: 0.9,  stage: health.stage },
-      { x: 82, base: 28, s: 0.95, stage: health.stage },
-      { x: 34, base: 24, s: 1.1,  stage: health.stage },
-      { x: 62, base: 26, s: 1.0,  stage: health.stage },
-      { x: 48, base: 34, s: 0.75, stage: downStage(health.stage) },
-      { x: 24, base: 18, s: 1.2,  stage: health.stage },
-      { x: 74, base: 16, s: 1.15, stage: health.stage },
-      { x: 6,  base: 22, s: 0.7,  stage: downStage(health.stage) },
-      { x: 92, base: 20, s: 0.75, stage: downStage(health.stage) },
-    ];
-    return positions.slice(0, treeCount);
+    const rng = mulberry32(1337);
+    const all: { x: number; base: number; s: number; stage: ForestHealth["stage"]; z: number; sway: number }[] = [];
+    // Back row (far, small, high on horizon)
+    for (let i = 0; i < 18; i++) {
+      const x = 2 + (i * 5.7 + rng() * 3) % 96;
+      const base = 26 + rng() * 8; // higher = farther
+      const s = 0.42 + rng() * 0.18;
+      all.push({ x, base, s, stage: downStage(downStage(health.stage)), z: 10 + Math.floor(base), sway: rng() });
+    }
+    // Mid row
+    for (let i = 0; i < 18; i++) {
+      const x = 1 + (i * 6.1 + rng() * 4) % 98;
+      const base = 14 + rng() * 12;
+      const s = 0.65 + rng() * 0.25;
+      all.push({ x, base, s, stage: downStage(health.stage), z: 40 + Math.floor((30 - base) * 2), sway: rng() });
+    }
+    // Front row (large, low)
+    for (let i = 0; i < 14; i++) {
+      const x = -2 + (i * 7.5 + rng() * 5) % 104;
+      const base = 2 + rng() * 10;
+      const s = 0.95 + rng() * 0.35;
+      all.push({ x, base, s, stage: health.stage, z: 80 + Math.floor((15 - base) * 3), sway: rng() });
+    }
+    // Filter: no trees on pond area
+    const filtered = all.filter((t) => !inPond(t.x, t.base));
+    // Slice to current treeCount, preferring a balanced mix (interleave back/mid/front)
+    return filtered.slice(0, Math.min(treeCount, filtered.length));
   }, [treeCount, health.stage]);
 
-  const flowers = useMemo(
-    () =>
-      Array.from({ length: 10 }).map((_, i) => ({
-        x: 5 + i * 9 + (i % 2 ? 3 : 0),
-        base: 6 + (i % 3) * 3,
-        variant: ((i % 3) + 1) as 1 | 2 | 3,
-      })),
-    [],
-  );
+  // Dense grass tufts — clustered, varied heights & shades, avoiding pond
+  const grasses = useMemo(() => {
+    const rng = mulberry32(42);
+    const arr: { x: number; base: number; scale: number; shade: 0 | 1 | 2; delay: number }[] = [];
+    for (let i = 0; i < 90; i++) {
+      const x = rng() * 100;
+      const base = rng() * 22; // within grass layer
+      if (inPond(x, base)) continue;
+      arr.push({
+        x,
+        base,
+        scale: 0.6 + rng() * 0.9,
+        shade: (Math.floor(rng() * 3) as 0 | 1 | 2),
+        delay: rng() * 2,
+      });
+    }
+    return arr;
+  }, []);
 
-  const grasses = useMemo(
-    () => Array.from({ length: 14 }).map((_, i) => ({ x: i * 7 + 2, base: 2 + (i % 3) })),
-    [],
-  );
+  // Flowers — clustered on land only, never on pond
+  const flowers = useMemo(() => {
+    const rng = mulberry32(99);
+    const arr: { x: number; base: number; variant: 1 | 2 | 3; delay: number }[] = [];
+    for (let i = 0; i < 22; i++) {
+      const x = rng() * 100;
+      const base = 2 + rng() * 14;
+      if (inPond(x, base)) continue;
+      arr.push({
+        x,
+        base,
+        variant: (((Math.floor(rng() * 3)) + 1) as 1 | 2 | 3),
+        delay: 0.4 + rng() * 0.8,
+      });
+    }
+    return arr;
+  }, []);
 
   return (
     <div
@@ -94,7 +138,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
         boxShadow: "var(--shadow-card), var(--shadow-inner-warm)",
       }}
     >
-      {/* Sun / moon (parallax: sky moves opposite mouse) */}
+      {/* Sun / moon */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1, x: parallax.x * -14, y: parallax.y * -6 }}
@@ -138,39 +182,19 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
           />
         ))}
 
-      {/* Clouds — parallax background layer */}
-      <motion.div
-        className="absolute inset-x-0 pointer-events-none"
-        style={{ top: "6%" }}
-        animate={{ x: parallax.x * -18 }}
-        transition={{ type: "spring", stiffness: 30, damping: 12 }}
-      >
+      {/* Clouds — parallax background */}
+      <motion.div className="absolute inset-x-0 pointer-events-none" style={{ top: "6%" }} animate={{ x: parallax.x * -18 }} transition={{ type: "spring", stiffness: 30, damping: 12 }}>
         <div className="drift-cloud-slow" style={{ opacity: isDark ? 0.4 : 0.9 }}>
           <Cloud scale={0.75} />
         </div>
       </motion.div>
-      <motion.div
-        className="absolute inset-x-0 pointer-events-none"
-        style={{ top: "20%" }}
-        animate={{ x: parallax.x * -10 }}
-        transition={{ type: "spring", stiffness: 30, damping: 12 }}
-      >
+      <motion.div className="absolute inset-x-0 pointer-events-none" style={{ top: "20%" }} animate={{ x: parallax.x * -10 }} transition={{ type: "spring", stiffness: 30, damping: 12 }}>
         <div className="drift-cloud" style={{ opacity: isDark ? 0.35 : 0.75, animationDelay: "-30s" }}>
           <Cloud scale={0.55} opacity={0.7} />
         </div>
       </motion.div>
-      <motion.div
-        className="absolute inset-x-0 pointer-events-none"
-        style={{ top: "32%" }}
-        animate={{ x: parallax.x * -6 }}
-        transition={{ type: "spring", stiffness: 30, damping: 12 }}
-      >
-        <div className="drift-cloud" style={{ opacity: isDark ? 0.25 : 0.55, animationDelay: "-70s", animationDuration: "110s" }}>
-          <Cloud scale={0.4} opacity={0.55} />
-        </div>
-      </motion.div>
 
-      {/* Distant hills — parallax slow */}
+      {/* Distant hills — slight parallax */}
       <motion.svg
         viewBox="0 0 800 300"
         preserveAspectRatio="none"
@@ -183,103 +207,110 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
         <path d="M0 230 Q160 170 320 200 T640 210 T800 220 L800 300 L0 300 Z" fill="oklch(0.45 0.11 140)" opacity="0.8" />
       </motion.svg>
 
-      {/* GROUND — textured grass plane with soil edge */}
-      <div
-        className="absolute inset-x-0 bottom-0 pointer-events-none"
-        style={{ height: `${GROUND_TOP}%` }}
-      >
-        {/* Soil undershade */}
+      {/* ============ GROUND + FOREGROUND (anchored together) ============ */}
+      <div className="absolute inset-x-0 bottom-0 pointer-events-none" style={{ height: `${GROUND_TOP}%` }}>
+        {/* Grass base gradient */}
         <div
-          className="absolute inset-x-0 bottom-0"
+          className="absolute inset-0"
           style={{
-            height: "100%",
             background:
-              "linear-gradient(180deg, var(--grass-a) 0%, var(--grass-b) 40%, var(--grass-deep) 78%, var(--soil) 100%)",
+              "linear-gradient(180deg, var(--grass-a) 0%, var(--grass-b) 35%, var(--grass-deep) 72%, var(--soil) 100%)",
           }}
         />
-        {/* Grass horizon curve */}
+        {/* Horizon curve */}
         <svg viewBox="0 0 800 60" preserveAspectRatio="none" className="absolute inset-x-0 top-0" style={{ height: 32, transform: "translateY(-14px)" }}>
-          <path
-            d="M0 40 Q80 10 180 28 T360 22 T540 30 T720 20 T800 26 L800 60 L0 60 Z"
-            fill="var(--grass-a)"
-          />
-          <path
-            d="M0 48 Q100 30 220 42 T440 38 T680 44 T800 40 L800 60 L0 60 Z"
-            fill="var(--grass-b)"
-            opacity="0.7"
-          />
+          <path d="M0 40 Q80 10 180 28 T360 22 T540 30 T720 20 T800 26 L800 60 L0 60 Z" fill="var(--grass-a)" />
+          <path d="M0 48 Q100 30 220 42 T440 38 T680 44 T800 40 L800 60 L0 60 Z" fill="var(--grass-b)" opacity="0.7" />
         </svg>
-        {/* Grass blade texture (subtle) */}
-        <svg className="absolute inset-0 w-full h-full opacity-40" preserveAspectRatio="none" viewBox="0 0 400 200">
-          {Array.from({ length: 60 }).map((_, i) => {
-            const x = (i * 7.3) % 400;
-            const h = 4 + ((i * 13) % 6);
-            const y = 20 + ((i * 17) % 160);
+
+        {/* Dense grass blade texture — many small varied strokes across full ground */}
+        <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 400 200">
+          {Array.from({ length: 260 }).map((_, i) => {
+            const seed = i * 2654435761;
+            const rx = ((seed >>> 0) % 1000) / 1000;
+            const ry = (((seed * 7) >>> 0) % 1000) / 1000;
+            const x = rx * 400;
+            const y = 8 + ry * 190;
+            const h = 3 + ((i * 5) % 8);
+            const bend = ((i % 5) - 2) * 1.2;
+            const shades = ["var(--grass-a)", "var(--grass-b)", "var(--grass-deep)", "oklch(0.62 0.14 145)"];
+            const stroke = shades[i % 4];
+            const opacity = 0.55 + ((i % 4) * 0.1);
             return (
               <path
                 key={i}
-                d={`M${x} ${y + h} Q${x + 1} ${y + h / 2} ${x + 2} ${y}`}
-                stroke="var(--grass-deep)"
-                strokeWidth="0.8"
+                d={`M${x} ${y + h} Q${x + bend} ${y + h / 2} ${x + bend * 2} ${y}`}
+                stroke={stroke}
+                strokeWidth={0.9}
                 fill="none"
-                opacity={0.5}
+                opacity={opacity}
               />
             );
           })}
         </svg>
+
         {/* Soil line highlight */}
         <div className="absolute inset-x-0" style={{ bottom: 0, height: 8, background: "linear-gradient(180deg, transparent, oklch(0.28 0.06 55 / 0.35))" }} />
-      </div>
 
-      {/* Pond */}
-      <div className="absolute" style={{ left: "58%", bottom: "6%", width: "34%", zIndex: 20 }}>
-        <Pond />
-      </div>
+        {/* --- Pond (inside ground layer so it scrolls with land) --- */}
+        <div className="absolute" style={{ left: "58%", bottom: "10%", width: "34%", zIndex: 20 }}>
+          <Pond />
+        </div>
 
-      {/* Foreground layer — parallax opposite */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        animate={{ x: parallax.x * 8, y: parallax.y * 3 }}
-        transition={{ type: "spring", stiffness: 40, damping: 15 }}
-      >
-        {/* Trees + ground shadows */}
-        {trees.map((t, i) => (
-          <div
-            key={i}
-            className="absolute"
-            style={{
-              left: `${t.x}%`,
-              bottom: `${t.base}%`,
-              transform: `translateX(-50%) scale(${t.s})`,
-              transformOrigin: "bottom center",
-              zIndex: 50 + Math.floor(t.base),
-            }}
-          >
-            {/* Ground shadow */}
+        {/* --- Trees (positioned relative to ground layer, so they never detach) --- */}
+        {trees.map((t, i) => {
+          // Convert base (percent of scene height) to percent of ground layer height
+          const bottomPct = (t.base / GROUND_TOP) * 100;
+          const isFar = t.s < 0.6;
+          return (
             <div
-              aria-hidden
+              key={`tr-${i}`}
+              className="absolute"
               style={{
-                position: "absolute",
-                left: "50%",
-                bottom: -6,
-                width: 100,
-                height: 18,
-                transform: "translateX(-50%)",
-                background: "radial-gradient(ellipse at center, oklch(0.15 0.04 60 / 0.35), transparent 70%)",
-                filter: "blur(2px)",
-                pointerEvents: "none",
+                left: `${t.x}%`,
+                bottom: `${bottomPct}%`,
+                transform: `translateX(-50%) scale(${t.s})`,
+                transformOrigin: "bottom center",
+                zIndex: t.z,
+                filter: isFar ? `saturate(0.7) brightness(${0.85 + t.sway * 0.05}) blur(0.3px)` : undefined,
+                opacity: isFar ? 0.88 : 1,
               }}
-            />
-            <Tree stage={t.stage as ForestHealth["stage"]} delay={i * 0.08} />
-          </div>
-        ))}
+            >
+              {/* Ground shadow */}
+              <div
+                aria-hidden
+                style={{
+                  position: "absolute",
+                  left: "50%",
+                  bottom: -4,
+                  width: 80,
+                  height: 14,
+                  transform: "translateX(-50%)",
+                  background: "radial-gradient(ellipse at center, oklch(0.15 0.04 60 / 0.32), transparent 70%)",
+                  filter: "blur(2px)",
+                  pointerEvents: "none",
+                }}
+              />
+              {isFar ? (
+                <SimpleTree color="var(--fern-deep)" />
+              ) : (
+                <Tree stage={t.stage} delay={Math.min(i * 0.03, 0.9)} />
+              )}
+            </div>
+          );
+        })}
 
-        {/* Flowers */}
+        {/* Flowers — only on land */}
         {flowers.map((f, i) => (
           <div
             key={`f-${i}`}
             className="absolute"
-            style={{ left: `${f.x}%`, bottom: `${f.base}%`, zIndex: 45, transform: "translateX(-50%)" }}
+            style={{
+              left: `${f.x}%`,
+              bottom: `${(f.base / GROUND_TOP) * 100}%`,
+              zIndex: 45,
+              transform: "translateX(-50%)",
+            }}
           >
             <div
               aria-hidden
@@ -287,28 +318,38 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
                 position: "absolute",
                 left: "50%",
                 bottom: -3,
-                width: 24,
-                height: 6,
+                width: 20,
+                height: 5,
                 transform: "translateX(-50%)",
-                background: "radial-gradient(ellipse at center, oklch(0.15 0.04 60 / 0.28), transparent 70%)",
+                background: "radial-gradient(ellipse at center, oklch(0.15 0.04 60 / 0.25), transparent 70%)",
                 filter: "blur(1.5px)",
               }}
             />
-            <Wildflower variant={f.variant} delay={0.6 + i * 0.05} />
+            <Wildflower variant={f.variant} delay={f.delay} />
           </div>
         ))}
 
-        {/* Grass tufts */}
-        {grasses.map((g, i) => (
-          <div
-            key={`g-${i}`}
-            className="absolute"
-            style={{ left: `${g.x}%`, bottom: `${g.base}%`, zIndex: 40, transform: "translateX(-50%)" }}
-          >
-            <GrassTuft delay={i * 0.15} />
-          </div>
-        ))}
-      </motion.div>
+        {/* Grass tufts — dense, varied */}
+        {grasses.map((g, i) => {
+          const shades = ["var(--grass-a)", "var(--grass-b)", "var(--grass-deep)"];
+          return (
+            <div
+              key={`g-${i}`}
+              className="absolute"
+              style={{
+                left: `${g.x}%`,
+                bottom: `${(g.base / GROUND_TOP) * 100}%`,
+                zIndex: 30 + Math.floor(g.base),
+                transform: `translateX(-50%) scale(${g.scale})`,
+                transformOrigin: "bottom center",
+                color: shades[g.shade],
+              }}
+            >
+              <GrassTuft delay={g.delay} />
+            </div>
+          );
+        })}
+      </div>
 
       {/* Wildlife */}
       <AnimatePresence>
@@ -316,7 +357,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
           <motion.div
             key="bfly"
             className="absolute"
-            style={{ left: "22%", bottom: "55%", zIndex: 70 }}
+            style={{ left: "22%", bottom: "55%", zIndex: 200 }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, x: [0, 30, 10, 40, 0], y: [0, -12, 6, -8, 0] }}
             transition={{ opacity: { duration: 0.6 }, x: { duration: 12, repeat: Infinity, ease: "easeInOut" }, y: { duration: 12, repeat: Infinity, ease: "easeInOut" } }}
@@ -328,7 +369,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
           <motion.div
             key="bird"
             className="absolute"
-            style={{ left: "68%", bottom: "60%", zIndex: 70 }}
+            style={{ left: "68%", bottom: "60%", zIndex: 200 }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, x: [0, -20, 15, 0], y: [0, -6, -2, 0] }}
             transition={{ opacity: { duration: 0.6 }, x: { duration: 9, repeat: Infinity, ease: "easeInOut" }, y: { duration: 2.2, repeat: Infinity, ease: "easeInOut" } }}
@@ -340,7 +381,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
           <motion.div
             key="rab"
             className="absolute"
-            style={{ left: "40%", bottom: "8%", zIndex: 65 }}
+            style={{ left: "40%", bottom: "8%", zIndex: 190 }}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: [0, -8, 0, 0, 0, -8, 0] }}
             transition={{ opacity: { duration: 0.6 }, y: { duration: 4.5, repeat: Infinity, ease: "easeOut" } }}
@@ -352,13 +393,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
           </motion.div>
         )}
         {unlockedSpecies.includes("deer") && (
-          <motion.div
-            key="deer"
-            className="absolute"
-            style={{ left: "8%", bottom: "10%", zIndex: 65 }}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
+          <motion.div key="deer" className="absolute" style={{ left: "8%", bottom: "10%", zIndex: 190 }} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
             <div style={{ position: "relative" }}>
               <div aria-hidden style={{ position: "absolute", left: "50%", bottom: -4, width: 60, height: 10, transform: "translateX(-50%)", background: "radial-gradient(ellipse at center, oklch(0.15 0.04 60 / 0.32), transparent 70%)", filter: "blur(2px)" }} />
               <Creature id="deer" />
@@ -366,13 +401,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
           </motion.div>
         )}
         {unlockedSpecies.includes("fox") && (
-          <motion.div
-            key="fox"
-            className="absolute"
-            style={{ left: "78%", bottom: "6%", zIndex: 65 }}
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
+          <motion.div key="fox" className="absolute" style={{ left: "78%", bottom: "6%", zIndex: 190 }} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }}>
             <div style={{ position: "relative" }}>
               <div aria-hidden style={{ position: "absolute", left: "50%", bottom: -4, width: 56, height: 10, transform: "translateX(-50%)", background: "radial-gradient(ellipse at center, oklch(0.15 0.04 60 / 0.32), transparent 70%)", filter: "blur(2px)" }} />
               <Creature id="fox" />
@@ -384,15 +413,8 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
             <motion.div
               key={`ff-${i}`}
               className="absolute"
-              style={{
-                left: `${30 + i * 15}%`,
-                bottom: `${28 + (i % 2) * 12}%`,
-                zIndex: 70,
-              }}
-              animate={{
-                x: [0, 12, -8, 6, 0],
-                y: [0, -10, -4, -14, 0],
-              }}
+              style={{ left: `${30 + i * 15}%`, bottom: `${28 + (i % 2) * 12}%`, zIndex: 200 }}
+              animate={{ x: [0, 12, -8, 6, 0], y: [0, -10, -4, -14, 0] }}
               transition={{ duration: 6 + i, repeat: Infinity, ease: "easeInOut", delay: i * 0.4 }}
             >
               <Creature id="firefly" />
@@ -409,9 +431,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="absolute inset-0 pointer-events-none"
-            style={{ zIndex: 80,
-              background: "linear-gradient(180deg, oklch(0.3 0.04 260 / 0.35), oklch(0.2 0.04 260 / 0.15))",
-            }}
+            style={{ zIndex: 210, background: "linear-gradient(180deg, oklch(0.3 0.04 260 / 0.35), oklch(0.2 0.04 260 / 0.15))" }}
           >
             {Array.from({ length: 30 }).map((_, i) => (
               <span
@@ -435,6 +455,29 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
   );
 }
 
+/** Simplified background tree — lightweight silhouette for depth layers */
+function SimpleTree({ color }: { color: string }) {
+  return (
+    <svg viewBox="0 0 60 90" style={{ width: 60, height: 90, overflow: "visible" }}>
+      <path d="M30 88 Q29 60 28 48" stroke="oklch(0.3 0.04 45)" strokeWidth="3" fill="none" strokeLinecap="round" />
+      <path d="M30 12 Q12 14 8 32 Q2 44 14 52 Q18 62 32 60 Q48 64 52 50 Q60 42 52 30 Q50 12 30 12 Z" fill={color} opacity="0.85" />
+    </svg>
+  );
+}
+
 function downStage(s: ForestHealth["stage"]): ForestHealth["stage"] {
   return s === "mature" ? "young" : s === "young" ? "sapling" : s === "sapling" ? "seedling" : "seedling";
+}
+
+// Small deterministic PRNG so layouts are stable across renders.
+function mulberry32(seed: number) {
+  let a = seed >>> 0;
+  return function () {
+    a |= 0;
+    a = (a + 0x6D2B79F5) | 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
 }
