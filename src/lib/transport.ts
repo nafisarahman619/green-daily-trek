@@ -83,10 +83,10 @@ export function computeHealth(recent: { co2_kg: number; log_date: string }[]): F
     score >= 35 ? "sapling" : "seedling";
 
   const treeCount =
-    score >= 82 ? 9 :
-    score >= 65 ? 7 :
-    score >= 45 ? 5 :
-    score >= 25 ? 3 : 2;
+    score >= 82 ? 48 :
+    score >= 65 ? 34 :
+    score >= 45 ? 22 :
+    score >= 25 ? 12 : 6;
 
   // Storm = 3 of last 4 days above baseline
   const last4 = days.slice(0, 4);
