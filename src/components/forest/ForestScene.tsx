@@ -263,7 +263,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
         {trees.map((t, i) => {
           // Convert base (percent of scene height) to percent of ground layer height
           const bottomPct = (t.base / GROUND_TOP) * 100;
-          const isFar = t.s < 0.6;
+          const isFar = t.s < 0.9;
           return (
             <div
               key={`tr-${i}`}
