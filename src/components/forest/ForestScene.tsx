@@ -136,6 +136,8 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
         background: skyGradient,
         aspectRatio: compact ? "16 / 9" : "16 / 10",
         boxShadow: "var(--shadow-card), var(--shadow-inner-warm)",
+        isolation: "isolate",
+        contain: "paint",
       }}
     >
       {/* Sun / moon */}
