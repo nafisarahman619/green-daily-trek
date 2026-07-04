@@ -53,35 +53,43 @@ export function Tree({ stage, wilted, delay = 0, scale = 1 }: TreeProps) {
         )}
         {stage === "sapling" && (
           <>
-            <path d="M60 155 L60 100" stroke={TRUNK} strokeWidth="5" strokeLinecap="round" />
-            <circle cx="60" cy="90" r="26" fill={c.mid} />
-            <circle cx="46" cy="82" r="16" fill={c.bright} />
-            <circle cx="72" cy="94" r="18" fill={c.deep} />
-            <circle cx="60" cy="98" r="12" fill={c.shade} opacity="0.4" />
+            <path d="M60 155 Q59 130 58 100" stroke={TRUNK} strokeWidth="5" strokeLinecap="round" fill="none" />
+            {/* organic leaf-cluster canopy */}
+            <path d="M60 74 Q40 70 38 88 Q30 94 42 102 Q46 112 60 108 Q76 112 80 100 Q92 94 82 84 Q82 68 60 74 Z" fill={c.mid} />
+            <path d="M50 78 Q40 80 42 92 Q50 96 58 90 Q60 82 50 78 Z" fill={c.bright} />
+            <path d="M70 84 Q80 84 78 96 Q68 100 66 92 Q66 84 70 84 Z" fill={c.deep} />
+            <ellipse cx="60" cy="104" rx="20" ry="6" fill={c.shade} opacity="0.35" />
           </>
         )}
         {stage === "young" && (
           <>
-            <path d="M60 158 L58 92" stroke={TRUNK} strokeWidth="7" strokeLinecap="round" />
-            <path d="M58 130 L48 118" stroke={TRUNK_DARK} strokeWidth="4" strokeLinecap="round" />
-            <ellipse cx="60" cy="80" rx="42" ry="34" fill={c.mid} />
-            <ellipse cx="42" cy="70" rx="20" ry="18" fill={c.bright} />
-            <ellipse cx="78" cy="88" rx="22" ry="18" fill={c.deep} />
-            <ellipse cx="60" cy="90" rx="30" ry="14" fill={c.shade} opacity="0.35" />
-            <circle cx="50" cy="62" r="6" fill={c.bright} opacity="0.9" />
+            <path d="M60 158 Q59 125 58 92" stroke={TRUNK} strokeWidth="7" strokeLinecap="round" fill="none" />
+            <path d="M58 128 Q50 122 44 116" stroke={TRUNK_DARK} strokeWidth="3.5" strokeLinecap="round" fill="none" />
+            {/* organic layered canopy blob */}
+            <path d="M60 46 Q34 46 24 66 Q14 78 26 92 Q22 108 44 108 Q52 118 66 112 Q84 116 92 100 Q104 92 96 76 Q100 58 82 54 Q76 40 60 46 Z" fill={c.deep} />
+            <path d="M62 52 Q42 52 34 68 Q26 80 38 90 Q40 102 58 100 Q76 104 82 92 Q92 82 84 70 Q82 56 62 52 Z" fill={c.mid} />
+            <path d="M52 58 Q40 60 38 74 Q42 84 54 82 Q64 80 62 68 Q60 58 52 58 Z" fill={c.bright} />
+            <path d="M74 66 Q84 68 84 82 Q78 90 70 84 Q66 74 74 66 Z" fill={c.bright} opacity="0.85" />
+            <ellipse cx="60" cy="106" rx="30" ry="8" fill={c.shade} opacity="0.35" />
+            <circle cx="46" cy="66" r="4" fill={c.bright} opacity="0.7" />
+            <circle cx="80" cy="82" r="3" fill={c.bright} opacity="0.6" />
           </>
         )}
         {stage === "mature" && (
           <>
-            <path d="M60 160 L58 90" stroke={TRUNK} strokeWidth="10" strokeLinecap="round" />
-            <path d="M58 130 L42 108" stroke={TRUNK_DARK} strokeWidth="5" strokeLinecap="round" />
-            <path d="M58 118 L74 100" stroke={TRUNK_DARK} strokeWidth="5" strokeLinecap="round" />
-            <ellipse cx="42" cy="82" rx="26" ry="24" fill={c.deep} />
-            <ellipse cx="80" cy="80" rx="28" ry="26" fill={c.mid} />
-            <ellipse cx="60" cy="60" rx="34" ry="30" fill={c.bright} />
-            <ellipse cx="60" cy="92" rx="42" ry="18" fill={c.shade} opacity="0.4" />
-            <circle cx="42" cy="60" r="8" fill={c.bright} opacity="0.9" />
-            <circle cx="82" cy="68" r="6" fill={c.bright} opacity="0.8" />
+            <path d="M60 160 Q58 122 58 88" stroke={TRUNK} strokeWidth="10" strokeLinecap="round" fill="none" />
+            <path d="M58 128 Q46 118 38 108" stroke={TRUNK_DARK} strokeWidth="5" strokeLinecap="round" fill="none" />
+            <path d="M58 118 Q68 108 78 100" stroke={TRUNK_DARK} strokeWidth="5" strokeLinecap="round" fill="none" />
+            {/* Rich layered organic canopy */}
+            <path d="M60 24 Q28 26 16 52 Q4 68 18 84 Q10 102 34 108 Q42 122 62 116 Q86 122 96 104 Q114 96 106 76 Q116 58 96 46 Q92 26 60 24 Z" fill={c.deep} />
+            <path d="M60 30 Q34 32 24 54 Q14 68 28 82 Q24 98 46 104 Q54 114 66 110 Q84 116 92 100 Q106 92 100 76 Q106 60 88 50 Q84 30 60 30 Z" fill={c.mid} />
+            <path d="M58 38 Q40 40 32 58 Q26 72 40 82 Q44 94 60 92 Q76 96 82 82 Q92 74 84 62 Q84 46 58 38 Z" fill={c.bright} />
+            <path d="M48 50 Q38 54 40 68 Q50 76 58 68 Q62 58 48 50 Z" fill={c.bright} opacity="0.9" />
+            <path d="M74 56 Q86 58 84 76 Q74 82 68 72 Q68 58 74 56 Z" fill={c.mid} opacity="0.9" />
+            <ellipse cx="60" cy="108" rx="42" ry="10" fill={c.shade} opacity="0.4" />
+            <circle cx="42" cy="58" r="6" fill={c.bright} opacity="0.85" />
+            <circle cx="82" cy="66" r="5" fill={c.bright} opacity="0.75" />
+            <circle cx="60" cy="46" r="4" fill={c.bright} opacity="0.6" />
           </>
         )}
       </g>
