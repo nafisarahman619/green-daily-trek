@@ -34,16 +34,6 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
 
-  const handleGoogle = async () => {
-    setBusy(true);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (result.error) {
-      toast.error("Google sign-in failed");
-      setBusy(false);
-    }
-    if (result.redirected) return;
-    navigate({ to: "/app" });
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
