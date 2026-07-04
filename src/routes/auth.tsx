@@ -121,21 +121,6 @@ function AuthPage() {
             ))}
           </div>
 
-          <button
-            type="button"
-            onClick={handleGoogle}
-            disabled={busy}
-            className="mb-4 flex w-full items-center justify-center gap-3 rounded-full border py-3 text-sm font-semibold transition-colors"
-            style={{ background: "var(--paper)", borderColor: "var(--border)", color: "var(--delft-deep)" }}
-          >
-            <GoogleG /> Continue with Google
-          </button>
-
-          <div className="my-4 flex items-center gap-3 text-xs" style={{ color: "var(--ink-soft)" }}>
-            <div className="h-px flex-1" style={{ background: "var(--border)" }} />
-            or with email
-            <div className="h-px flex-1" style={{ background: "var(--border)" }} />
-          </div>
 
           <form onSubmit={handleSubmit} className="space-y-3">
             {mode === "signup" && (
