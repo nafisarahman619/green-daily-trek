@@ -8,13 +8,16 @@ interface ForestSceneProps {
   health: ForestHealth;
   unlockedSpecies: string[];
   compact?: boolean;
+  /** Rolling 7-day sum of user's CO2 (kg). Drives the stump/weekly-budget system. */
+  weeklyCO2?: number;
 }
 
 /**
  * The main forest scene — the emotional heart of the app.
  * Grounded, layered, and continuously alive.
  */
-export function ForestScene({ health, unlockedSpecies, compact }: ForestSceneProps) {
+export function ForestScene({ health, unlockedSpecies, compact, weeklyCO2 = 0 }: ForestSceneProps) {
+
   const tod = timeOfDay();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
