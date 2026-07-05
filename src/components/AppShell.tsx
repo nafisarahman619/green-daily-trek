@@ -47,10 +47,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               );
             })}
           </nav>
-          <button onClick={handleSignOut} className="btn-ghost-delft" style={{ padding: "0.5rem 0.9rem", fontSize: "0.85rem" }}>
-            <LogOut className="h-4 w-4" />
-            <span className="hidden sm:inline">Sign out</span>
-          </button>
+          <Link to="/profile" className="btn-ghost-delft" style={{ padding: "0.5rem 0.9rem", fontSize: "0.85rem" }}>
+            <User className="h-4 w-4" />
+            <span className="hidden sm:inline">Profile</span>
+          </Link>
         </div>
         {/* Mobile bottom nav */}
         <nav className="md:hidden">
