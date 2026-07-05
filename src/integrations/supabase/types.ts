@@ -71,6 +71,27 @@ export type Database = {
         }
         Relationships: []
       }
+      tree_plantings: {
+        Row: {
+          count: number
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          count?: number
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          count?: number
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       wildlife_unlocks: {
         Row: {
           id: string
