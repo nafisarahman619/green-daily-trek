@@ -404,28 +404,48 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
 
       {/* Wildlife */}
       <AnimatePresence>
-        {unlockedSpecies.includes("butterfly") && (
-          <motion.div
-            key="bfly"
-            className="absolute"
-            style={{ left: "22%", bottom: "55%", zIndex: 200 }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, x: [0, 30, 10, 40, 0], y: [0, -12, 6, -8, 0] }}
-            transition={{ opacity: { duration: 0.6 }, x: { duration: 12, repeat: Infinity, ease: "easeInOut" }, y: { duration: 12, repeat: Infinity, ease: "easeInOut" } }}
-          >
-            <Creature id="butterfly" />
-          </motion.div>
-        )}
+        {unlockedSpecies.includes("butterfly") &&
+          ([
+            { left: "22%", bottom: "55%", variant: 1 as const, xPath: [0, 30, 10, 40, 0], yPath: [0, -12, 6, -8, 0], dur: 12 },
+            { left: "55%", bottom: "42%", variant: 2 as const, xPath: [0, -25, 15, -10, 0], yPath: [0, 8, -14, 4, 0], dur: 14 },
+            { left: "78%", bottom: "50%", variant: 3 as const, xPath: [0, 20, -18, 12, 0], yPath: [0, -10, 12, -6, 0], dur: 11 },
+          ]).map((b, i) => (
+            <motion.div
+              key={`bfly-${i}`}
+              className="absolute"
+              style={{ left: b.left, bottom: b.bottom, zIndex: 200 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, x: b.xPath, y: b.yPath }}
+              transition={{
+                opacity: { duration: 0.6 },
+                x: { duration: b.dur, repeat: Infinity, ease: "easeInOut" },
+                y: { duration: b.dur, repeat: Infinity, ease: "easeInOut" },
+              }}
+            >
+              <Creature id="butterfly" variant={b.variant} />
+            </motion.div>
+          ))}
         {unlockedSpecies.includes("bird") && (
           <motion.div
             key="bird"
             className="absolute"
-            style={{ left: "68%", bottom: "60%", zIndex: 200 }}
+            style={{ top: "28%", left: 0, right: 0, zIndex: 200, pointerEvents: "none" }}
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1, x: [0, -20, 15, 0], y: [0, -6, -2, 0] }}
-            transition={{ opacity: { duration: 0.6 }, x: { duration: 9, repeat: Infinity, ease: "easeInOut" }, y: { duration: 2.2, repeat: Infinity, ease: "easeInOut" } }}
+            animate={{ opacity: 1 }}
+            transition={{ opacity: { duration: 0.6 } }}
           >
-            <Creature id="bird" />
+            <motion.div
+              style={{ position: "absolute", top: 0, willChange: "left" }}
+              animate={{ left: ["-8%", "108%"] }}
+              transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
+            >
+              <motion.div
+                animate={{ y: [0, -14, 4, -10, 0] }}
+                transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <Creature id="bird" />
+              </motion.div>
+            </motion.div>
           </motion.div>
         )}
         {unlockedSpecies.includes("rabbit") && (

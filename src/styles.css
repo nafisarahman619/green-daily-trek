@@ -364,6 +364,18 @@
   0%, 100% { opacity: 0.3; }
   50% { opacity: 1; }
 }
+@keyframes bfly-flap-l {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(0.25); }
+}
+@keyframes bfly-flap-r {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(0.25); }
+}
+@keyframes bird-flap {
+  0%, 100% { transform: rotate(-30deg); }
+  50% { transform: rotate(30deg); }
+}
 
 /* Scrollbar polish */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
