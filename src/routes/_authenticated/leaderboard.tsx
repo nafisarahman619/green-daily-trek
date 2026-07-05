@@ -128,11 +128,6 @@ function LeaderboardPage() {
                 >
                   {i + 1}
                 </div>
-                <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-2xl" style={{ background: "var(--canvas)" }}>
-                  <div style={{ transform: "scale(0.55)" }}>
-                    <Tree stage={stage as any} />
-                  </div>
-                </div>
                 <div
                   className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full text-lg"
                   style={{ background: "var(--canvas-warm)", border: "1.5px solid var(--border)" }}
