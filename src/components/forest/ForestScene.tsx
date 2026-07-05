@@ -404,7 +404,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
 
       {/* Wildlife */}
       <AnimatePresence>
-        {unlockedSpecies.includes("butterfly") &&
+        {tod !== "night" && unlockedSpecies.includes("butterfly") &&
           ([
             { left: "22%", bottom: "22%", variant: 1 as const, xPath: [0, 30, 10, 40, 0], yPath: [0, -12, 6, -8, 0], dur: 12 },
             { left: "55%", bottom: "14%", variant: 2 as const, xPath: [0, -25, 15, -10, 0], yPath: [0, 8, -14, 4, 0], dur: 14 },
@@ -427,7 +427,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
               </div>
             </motion.div>
           ))}
-        {unlockedSpecies.includes("bird") && (
+        {tod !== "night" && unlockedSpecies.includes("bird") && (
           <motion.div
             key="bird"
             className="absolute"
@@ -450,6 +450,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
             </motion.div>
           </motion.div>
         )}
+
         {unlockedSpecies.includes("rabbit") && (
           <motion.div
             key="rab"
