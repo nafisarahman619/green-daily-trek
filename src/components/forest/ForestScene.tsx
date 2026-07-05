@@ -264,6 +264,12 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
           // Convert base (percent of scene height) to percent of ground layer height
           const bottomPct = (t.base / GROUND_TOP) * 100;
           const isFar = t.s < 0.9;
+          // PREVIEW: slimmer + taller + moderately smaller — mature stage only.
+          // If you like it, I'll apply to sapling/young/seedling too.
+          const isPreviewShape = t.stage === "mature";
+          const shapeScaleX = isPreviewShape ? 0.62 : 1;
+          const shapeScaleY = isPreviewShape ? 1.05 : 1;
+          const sizeMul = isPreviewShape ? 0.72 : 1;
           return (
             <div
               key={`tr-${i}`}
@@ -271,7 +277,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
               style={{
                 left: `${t.x}%`,
                 bottom: `${bottomPct}%`,
-                transform: `translateX(-50%) scale(${t.s})`,
+                transform: `translateX(-50%) scale(${t.s * sizeMul})`,
                 transformOrigin: "bottom center",
                 zIndex: t.z,
                 filter: isFar ? `saturate(0.7) brightness(${0.85 + t.sway * 0.05}) blur(0.3px)` : undefined,
@@ -285,7 +291,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
                   position: "absolute",
                   left: "50%",
                   bottom: -4,
-                  width: 80,
+                  width: 80 * shapeScaleX,
                   height: 14,
                   transform: "translateX(-50%)",
                   background: "radial-gradient(ellipse at center, oklch(0.15 0.04 60 / 0.32), transparent 70%)",
@@ -293,14 +299,22 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
                   pointerEvents: "none",
                 }}
               />
-              {isFar ? (
-                <SimpleTree color="var(--fern-deep)" />
-              ) : (
-                <Tree stage={t.stage} delay={Math.min(i * 0.03, 0.9)} />
-              )}
+              <div
+                style={{
+                  transform: `scaleX(${shapeScaleX}) scaleY(${shapeScaleY})`,
+                  transformOrigin: "bottom center",
+                }}
+              >
+                {isFar ? (
+                  <SimpleTree color="var(--fern-deep)" />
+                ) : (
+                  <Tree stage={t.stage} delay={Math.min(i * 0.03, 0.9)} />
+                )}
+              </div>
             </div>
           );
         })}
+
 
         {/* Flowers — only on land */}
         {flowers.map((f, i) => (
