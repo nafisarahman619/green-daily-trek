@@ -1,14 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { ForestScene } from "@/components/forest/ForestScene";
-import { RootNetwork } from "@/components/forest/RootNetwork";
 import { LoadingSeedling } from "@/components/LoadingSeedling";
 import { useForestData } from "@/hooks/use-forest";
-import { useLifetimeSaved } from "@/hooks/use-lifetime-saved";
 import { supabase } from "@/integrations/supabase/client";
-import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Sparkles, Sprout, TrendingDown, TreePine, Cloud, Waypoints } from "lucide-react";
+import { motion } from "framer-motion";
+import { Sparkles, Sprout, TrendingDown, TreePine, Cloud } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { SPECIES } from "@/lib/wildlife";
 import { timeOfDay, DAILY_BASELINE_KG } from "@/lib/transport";
@@ -25,9 +23,7 @@ export const Route = createFileRoute("/_authenticated/app")({
 
 function AppHome() {
   const { data, health, isLoading } = useForestData();
-  const { data: lifetime } = useLifetimeSaved();
   const [profile, setProfile] = useState<{ display_name: string } | null>(null);
-  const [showRoots, setShowRoots] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -39,8 +35,6 @@ function AppHome() {
   }, []);
 
   if (isLoading || !data) return <LoadingSeedling label="Waking your forest…" />;
-
-  const lifetimeSaved = lifetime?.lifetimeCO2Saved ?? 0;
 
   const tod = timeOfDay();
   const greeting =
@@ -73,42 +67,6 @@ function AppHome() {
 
       {/* Main scene */}
       <ForestScene health={health} unlockedSpecies={data.unlocks} />
-
-      {/* Root network — independent, additive underground layer */}
-      <div className="mt-4 flex items-center justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-xs font-bold uppercase tracking-wider" style={{ color: "var(--ink-soft)" }}>
-            Root network
-          </p>
-          <p className="text-xs" style={{ color: "var(--ink-soft)" }}>
-            Lifetime CO₂ saved · {lifetimeSaved.toFixed(1)} kg vs solo car
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => setShowRoots((v) => !v)}
-          className="chip-soft"
-          aria-pressed={showRoots}
-          style={{ cursor: "pointer" }}
-        >
-          <Waypoints className="h-3.5 w-3.5" />
-          {showRoots ? "Hide roots" : "View roots"}
-        </button>
-      </div>
-      <AnimatePresence initial={false}>
-        {showRoots && (
-          <motion.div
-            key="roots"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
-            className="mt-3 overflow-hidden"
-          >
-            <RootNetwork lifetimeCO2Saved={lifetimeSaved} />
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Metrics */}
       <div className="mt-6 grid gap-3 md:grid-cols-4">
