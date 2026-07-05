@@ -255,6 +255,27 @@ export function ForestScene({ health, unlockedSpecies, compact, weeklyCO2 = 0 }:
         contain: "paint",
       }}
     >
+      {/* DEBUG: stump math (temporary — remove when verified) */}
+      <div
+        style={{
+          position: "absolute",
+          top: 8,
+          left: 8,
+          zIndex: 500,
+          padding: "6px 10px",
+          borderRadius: 8,
+          background: "rgba(0,0,0,0.7)",
+          color: "white",
+          fontSize: 11,
+          fontFamily: "monospace",
+          lineHeight: 1.4,
+          pointerEvents: "none",
+        }}
+      >
+        trees: {trees.length} · weekly: {weeklyCO2.toFixed(1)}kg · budget:{" "}
+        {totalBudget}kg · excess: {excess.toFixed(1)}kg · stumps: {stumpsCount}
+      </div>
+
       {/* Sun / moon */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
