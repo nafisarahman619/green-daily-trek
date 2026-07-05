@@ -243,20 +243,38 @@ export function GrassTuft({ delay = 0 }: { delay?: number }) {
 }
 
 /* Wildlife — matching flat-vector family */
-export function Creature({ id }: { id: string }) {
+export function Creature({ id, variant = 1 }: { id: string; variant?: 1 | 2 | 3 }) {
   switch (id) {
-    case "butterfly":
+    case "butterfly": {
+      const palettes = {
+        1: { wingA: "oklch(0.72 0.18 30)",  wingB: "oklch(0.86 0.14 60)",  spot: "oklch(0.35 0.08 30)",  accent: "oklch(0.95 0.1 90)" },
+        2: { wingA: "oklch(0.62 0.19 290)", wingB: "oklch(0.78 0.15 320)", spot: "oklch(0.3 0.1 290)",   accent: "oklch(0.95 0.06 300)" },
+        3: { wingA: "oklch(0.7 0.17 200)",  wingB: "oklch(0.85 0.12 180)", spot: "oklch(0.32 0.08 220)", accent: "oklch(0.96 0.09 110)" },
+      } as const;
+      const p = palettes[variant];
       return (
-        <svg viewBox="0 0 40 30" style={{ width: 32, height: 24, overflow: "visible" }}>
-          <g className="float-y">
-            <ellipse cx="14" cy="12" rx="10" ry="8" fill="oklch(0.72 0.16 30)" />
-            <ellipse cx="14" cy="20" rx="8" ry="6" fill="oklch(0.82 0.14 45)" />
-            <ellipse cx="26" cy="12" rx="10" ry="8" fill="oklch(0.72 0.16 30)" />
-            <ellipse cx="26" cy="20" rx="8" ry="6" fill="oklch(0.82 0.14 45)" />
-            <rect x="19" y="8" width="2" height="16" rx="1" fill={TRUNK_DARK} />
+        <svg viewBox="0 0 40 30" style={{ width: 34, height: 26, overflow: "visible" }}>
+          {/* Left wing pair — flap around body midline */}
+          <g style={{ transformOrigin: "20px 15px", animation: "bfly-flap-l 0.5s ease-in-out infinite" }}>
+            <ellipse cx="12" cy="11" rx="10" ry="8" fill={p.wingA} />
+            <ellipse cx="12" cy="20" rx="8" ry="6" fill={p.wingB} />
+            <circle cx="10" cy="11" r="2" fill={p.spot} />
+            <circle cx="10" cy="11" r="0.9" fill={p.accent} />
+            <path d="M6 20 Q12 18 16 21" stroke={p.spot} strokeWidth="0.9" fill="none" opacity="0.75" />
           </g>
+          {/* Right wing pair */}
+          <g style={{ transformOrigin: "20px 15px", animation: "bfly-flap-r 0.5s ease-in-out infinite" }}>
+            <ellipse cx="28" cy="11" rx="10" ry="8" fill={p.wingA} />
+            <ellipse cx="28" cy="20" rx="8" ry="6" fill={p.wingB} />
+            <circle cx="30" cy="11" r="2" fill={p.spot} />
+            <circle cx="30" cy="11" r="0.9" fill={p.accent} />
+            <path d="M24 20 Q28 18 34 21" stroke={p.spot} strokeWidth="0.9" fill="none" opacity="0.75" />
+          </g>
+          <rect x="19" y="8" width="2" height="16" rx="1" fill={TRUNK_DARK} />
+          <path d="M20 8 Q18 4 16 3 M20 8 Q22 4 24 3" stroke={TRUNK_DARK} strokeWidth="0.6" fill="none" />
         </svg>
       );
+    }
     case "rabbit":
       return (
         <svg viewBox="0 0 60 50" style={{ width: 48, height: 40 }}>
@@ -270,12 +288,18 @@ export function Creature({ id }: { id: string }) {
       );
     case "bird":
       return (
-        <svg viewBox="0 0 50 40" style={{ width: 40, height: 32 }}>
-          <ellipse cx="26" cy="24" rx="14" ry="10" fill="oklch(0.55 0.13 240)" />
-          <circle cx="36" cy="18" r="7" fill="oklch(0.55 0.13 240)" />
+        <svg viewBox="0 0 50 40" style={{ width: 44, height: 36, overflow: "visible" }}>
+          <ellipse cx="26" cy="24" rx="14" ry="9" fill="oklch(0.55 0.13 240)" />
+          <circle cx="37" cy="19" r="6.5" fill="oklch(0.58 0.13 240)" />
           <path d="M12 24 Q4 18 8 30 Z" fill="oklch(0.42 0.12 245)" />
-          <circle cx="38" cy="16" r="1.5" fill="white" />
-          <path d="M42 18 L48 20 L42 22 Z" fill="oklch(0.7 0.15 55)" />
+          <circle cx="39" cy="17" r="1.4" fill="white" />
+          <circle cx="39.3" cy="17" r="0.6" fill={TRUNK_DARK} />
+          <path d="M43 19 L49 21 L43 23 Z" fill="oklch(0.7 0.15 55)" />
+          {/* Flapping wing — pivots at shoulder */}
+          <g style={{ transformOrigin: "24px 22px", animation: "bird-flap 0.35s ease-in-out infinite" }}>
+            <path d="M24 22 Q 18 12 6 16 Q 16 20 24 22 Z" fill="oklch(0.5 0.13 240)" />
+            <path d="M24 22 Q 20 15 10 17" stroke="oklch(0.38 0.1 245)" strokeWidth="0.6" fill="none" />
+          </g>
         </svg>
       );
     case "firefly":
