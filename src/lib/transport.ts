@@ -68,8 +68,10 @@ export function computeHealth(recent: { co2_kg: number; log_date: string }[]): F
     .slice(0, 14);
 
   if (days.length === 0) {
-    return { score: 55, stage: "sapling", treeCount: 3, isStorm: false, streakGoodDays: 0 };
+    // New user with no logs: default to a fully grown, healthy forest.
+    return { score: 100, stage: "mature", treeCount: 48, isStorm: false, streakGoodDays: 0 };
   }
+
 
   // Average deficit vs baseline
   const avg = days.reduce((s, [, v]) => s + v, 0) / days.length;
