@@ -85,7 +85,8 @@ export function computeHealth(recent: { co2_kg: number; log_date: string }[]): F
     score >= 82 ? 48 :
     score >= 65 ? 34 :
     score >= 45 ? 22 :
-    score >= 25 ? 12 : 6;
+    score >= 25 ? 12 :
+    score >= 10 ? 4 : 1;
 
   const isStorm = false;
   const streakGoodDays = dayTotal <= DAILY_BASELINE_KG ? 1 : 0;
