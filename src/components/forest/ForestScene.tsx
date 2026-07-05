@@ -59,36 +59,54 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
   const inPond = (x: number, base: number) =>
     x >= POND.left - 2 && x <= POND.right + 2 && base >= POND.bottomMin - 1 && base <= POND.bottomMax + 2;
 
-  // Deterministic dense forest — up to ~50 trees, back rows smaller (depth).
-  // Each tree gets its own x, base (from ground), scale, and stage bias.
+  // Deterministic dense forest — distributes trees evenly across three depth rows.
+  // Each row gets a proportional share of `treeCount`, evenly spaced with small jitter
+  // so trees never clump or overlap into distorted shapes, even at mature (48 trees).
   const trees = useMemo(() => {
     const rng = mulberry32(1337);
+    const total = Math.max(1, treeCount);
+    // Row split: ~35% back, ~35% mid, ~30% front
+    const backN = Math.round(total * 0.35);
+    const midN = Math.round(total * 0.35);
+    const frontN = Math.max(0, total - backN - midN);
+
     const all: { x: number; base: number; s: number; stage: ForestHealth["stage"]; z: number; sway: number }[] = [];
-    // Back row (far, smaller, high on horizon)
-    for (let i = 0; i < 18; i++) {
-      const x = 2 + (i * 5.7 + rng() * 3) % 96;
-      const base = 26 + rng() * 8;
-      const s = 0.65 + rng() * 0.22;
-      all.push({ x, base, s, stage: downStage(downStage(health.stage)), z: 10 + Math.floor(base), sway: rng() });
-    }
+
+    const spread = (
+      count: number,
+      xMin: number,
+      xMax: number,
+      baseFn: () => number,
+      scaleFn: () => number,
+      stage: ForestHealth["stage"],
+      zBase: (base: number) => number,
+    ) => {
+      if (count <= 0) return;
+      const span = xMax - xMin;
+      const step = span / count;
+      // Max jitter kept below half-step so slots never swap → no overlap
+      const jitterAmp = step * 0.35;
+      for (let i = 0; i < count; i++) {
+        const center = xMin + step * (i + 0.5);
+        const x = center + (rng() - 0.5) * 2 * jitterAmp;
+        const base = baseFn();
+        const s = scaleFn();
+        all.push({ x, base, s, stage, z: zBase(base), sway: rng() });
+      }
+    };
+
+    // Back row (far, smaller, on horizon)
+    spread(backN, 2, 98, () => 26 + rng() * 8, () => 0.65 + rng() * 0.22,
+      downStage(downStage(health.stage)), (b) => 10 + Math.floor(b));
     // Mid row
-    for (let i = 0; i < 18; i++) {
-      const x = 1 + (i * 6.1 + rng() * 4) % 98;
-      const base = 14 + rng() * 12;
-      const s = 1.0 + rng() * 0.35;
-      all.push({ x, base, s, stage: downStage(health.stage), z: 40 + Math.floor((30 - base) * 2), sway: rng() });
-    }
-    // Front row (large, low)
-    for (let i = 0; i < 14; i++) {
-      const x = -2 + (i * 7.5 + rng() * 5) % 104;
-      const base = 2 + rng() * 10;
-      const s = 1.45 + rng() * 0.5;
-      all.push({ x, base, s, stage: health.stage, z: 80 + Math.floor((15 - base) * 3), sway: rng() });
-    }
+    spread(midN, 1, 99, () => 14 + rng() * 12, () => 1.0 + rng() * 0.35,
+      downStage(health.stage), (b) => 40 + Math.floor((30 - b) * 2));
+    // Front row (large, low) — restrict to left side so pond area stays clear
+    spread(frontN, 2, 56, () => 2 + rng() * 10, () => 1.45 + rng() * 0.4,
+      health.stage, (b) => 80 + Math.floor((15 - b) * 3));
+
     // Filter: no trees on pond area
-    const filtered = all.filter((t) => !inPond(t.x, t.base));
-    // Slice to current treeCount, preferring a balanced mix (interleave back/mid/front)
-    return filtered.slice(0, Math.min(treeCount, filtered.length));
+    return all.filter((t) => !inPond(t.x, t.base));
   }, [treeCount, health.stage]);
 
   // Dense grass tufts — clustered, varied heights & shades, avoiding pond
