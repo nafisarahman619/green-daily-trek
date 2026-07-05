@@ -231,7 +231,7 @@ export function Pond() {
 
         {/* Pad 2 (center) with white blossom */}
         <ellipse cx="120" cy="32" rx="13" ry="5.5" fill="oklch(0.55 0.14 145)" />
-        <path d="M120 32 L112 30" stroke="oklch(0.42 0.12 145)" strokeWidth="1.2" opacity="0.85" />
+        
         <g transform="translate(124 30)">
           <ellipse cx="0" cy="0" rx="3.2" ry="2" fill="oklch(0.97 0.02 100)" />
           <ellipse cx="-2.4" cy="-0.5" rx="1.6" ry="1.8" fill="oklch(0.98 0.02 100)" />
