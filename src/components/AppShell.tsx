@@ -1,8 +1,13 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { Leaf, Trophy, PenLine, BarChart3, User } from "lucide-react";
+import { useForestData } from "@/hooks/use-forest";
+import { tierFromScore, tierLabel } from "@/lib/forest-theme";
+import { ThemeDecorations } from "@/components/ThemeDecorations";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const loc = useLocation();
+  const { health } = useForestData();
+  const tier = tierFromScore(health?.score ?? 100);
 
   const nav = [
     { to: "/app", label: "Forest", icon: Leaf },
@@ -13,7 +18,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   ];
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--canvas)" }}>
+    <div
+      data-forest-theme={tier}
+      className="relative min-h-screen"
+      style={{ background: "var(--canvas)" }}
+    >
+      <ThemeDecorations tier={tier} />
+      <div className="relative z-10">
+
       <header className="sticky top-0 z-40 backdrop-blur-md" style={{ background: "color-mix(in oklab, var(--canvas) 78%, transparent)", borderBottom: "1px solid var(--border)" }}>
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
           <Link to="/app" className="flex items-center gap-2">
