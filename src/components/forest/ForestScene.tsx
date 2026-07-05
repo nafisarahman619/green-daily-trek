@@ -306,7 +306,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
           // Slimmer, slightly rounder, moderately smaller — applied uniformly to every stage.
           const shapeScaleX = 0.72;
           const shapeScaleY = 0.9;
-          const sizeMul = 0.7;
+          const sizeMul = 0.7 * mobileTreeScale;
 
           return (
             <div
