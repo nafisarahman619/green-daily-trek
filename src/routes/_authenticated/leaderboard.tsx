@@ -6,6 +6,9 @@ import { DAILY_BASELINE_KG } from "@/lib/transport";
 import { Tree } from "@/components/forest/Tree";
 import { motion } from "framer-motion";
 import { Trophy } from "lucide-react";
+import { signAvatarUrls } from "@/lib/avatars";
+
+
 
 export const Route = createFileRoute("/_authenticated/leaderboard")({
   head: () => ({
@@ -21,6 +24,8 @@ type Row = {
   user_id: string;
   display_name: string;
   avatar_emoji: string;
+  avatar_url: string | null;
+  avatar_signed: string | null;
   total_co2: number;
   good_days: number;
   score: number;
@@ -31,7 +36,7 @@ function LeaderboardPage() {
     queryKey: ["leaderboard"],
     queryFn: async (): Promise<Row[]> => {
       const [profRes, logRes] = await Promise.all([
-        supabase.from("profiles").select("id, display_name, avatar_emoji").limit(200),
+        supabase.from("profiles").select("id, display_name, avatar_emoji, avatar_url").limit(200),
         supabase.from("transport_logs").select("user_id, co2_kg, log_date").limit(5000),
       ]);
       const profiles = profRes.data ?? [];
@@ -50,8 +55,9 @@ function LeaderboardPage() {
         inner.set(l.log_date, (inner.get(l.log_date) ?? 0) + Number(l.co2_kg));
         dayTotals.set(l.user_id, inner);
       }
+      const signed = await signAvatarUrls(profiles.map((p: any) => p.avatar_url));
       return profiles
-        .map((p: any) => {
+        .map((p: any): Row => {
           const inner = dayTotals.get(p.id) ?? new Map();
           const daysArr = [...inner.entries()];
           const good = daysArr.filter(([, v]) => (v as number) <= DAILY_BASELINE_KG).length;
@@ -62,6 +68,8 @@ function LeaderboardPage() {
             user_id: p.id,
             display_name: p.display_name ?? "Forest friend",
             avatar_emoji: p.avatar_emoji ?? "🌱",
+            avatar_url: p.avatar_url ?? null,
+            avatar_signed: p.avatar_url ? signed.get(p.avatar_url) ?? null : null,
             total_co2: total,
             good_days: good,
             score,
@@ -124,6 +132,16 @@ function LeaderboardPage() {
                   <div style={{ transform: "scale(0.55)" }}>
                     <Tree stage={stage as any} />
                   </div>
+                </div>
+                <div
+                  className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full text-lg"
+                  style={{ background: "var(--canvas-warm)", border: "1.5px solid var(--border)" }}
+                >
+                  {r.avatar_signed ? (
+                    <img src={r.avatar_signed} alt={`${r.display_name}'s profile picture`} className="h-full w-full object-cover" />
+                  ) : (
+                    <span aria-hidden>{r.avatar_emoji}</span>
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate display text-lg" style={{ color: "var(--delft-deep)" }}>

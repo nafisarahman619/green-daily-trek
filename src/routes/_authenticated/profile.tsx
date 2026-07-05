@@ -7,8 +7,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { SPECIES } from "@/lib/wildlife";
 import { useTheme, useSoundPref, dailyMotivation } from "@/lib/preferences";
-import { Sun, Moon, Volume2, VolumeX, LogOut, Trash2, Info, Award, Sparkles } from "lucide-react";
+import { Sun, Moon, Volume2, VolumeX, LogOut, Trash2, Info, Award, Sparkles, Camera, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { AVATAR_ACCEPT, AVATAR_BUCKET, AVATAR_MAX_BYTES, signAvatarUrl } from "@/lib/avatars";
+import { useRef } from "react";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
@@ -26,9 +28,12 @@ function ProfilePage() {
   const { enabled: soundOn, setEnabled: setSoundOn } = useSoundPref();
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const [profile, setProfile] = useState<{ display_name: string } | null>(null);
+  const [profile, setProfile] = useState<{ display_name: string; avatar_emoji: string; avatar_url: string | null } | null>(null);
+  const [avatarSrc, setAvatarSrc] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -36,12 +41,48 @@ function ProfilePage() {
       if (!user.user) return;
       const { data: p } = await supabase
         .from("profiles")
-        .select("display_name")
+        .select("display_name, avatar_emoji, avatar_url")
         .eq("id", user.user.id)
         .maybeSingle();
       setProfile(p as any);
+      if (p?.avatar_url) setAvatarSrc(await signAvatarUrl(p.avatar_url));
     })();
   }, []);
+
+  const handleAvatarFile = async (file: File) => {
+    if (!AVATAR_ACCEPT.includes(file.type)) {
+      toast.error("Please choose a JPG, PNG, or WEBP image.");
+      return;
+    }
+    if (file.size > AVATAR_MAX_BYTES) {
+      toast.error("Image must be 5MB or smaller.");
+      return;
+    }
+    setUploading(true);
+    try {
+      const uid = data!.userId;
+      const ext = file.name.split(".").pop()?.toLowerCase() || (file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg");
+      const path = `${uid}/avatar-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from(AVATAR_BUCKET).upload(path, file, {
+        cacheControl: "3600",
+        upsert: true,
+        contentType: file.type,
+      });
+      if (upErr) throw upErr;
+      const { error: dbErr } = await supabase.from("profiles").update({ avatar_url: path }).eq("id", uid);
+      if (dbErr) throw dbErr;
+      setProfile((prev) => (prev ? { ...prev, avatar_url: path } : prev));
+      setAvatarSrc(await signAvatarUrl(path));
+      await qc.invalidateQueries({ queryKey: ["leaderboard"] });
+      toast.success("Profile picture updated.");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not upload picture.");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
 
   if (isLoading || !data) return <LoadingSeedling label="Loading your profile…" />;
 
@@ -77,12 +118,50 @@ function ProfilePage() {
   return (
     <AppShell>
 
-      <div className="mb-6">
-        <h1 className="display text-3xl md:text-4xl">Profile</h1>
-        <p className="mt-1 text-sm" style={{ color: "var(--ink-soft)" }}>
-          Signed in as <strong style={{ color: "var(--delft-deep)" }}>{name}</strong>.
-        </p>
+      <div className="mb-6 flex items-center gap-4">
+        <div className="relative">
+          <div
+            className="grid h-20 w-20 place-items-center overflow-hidden rounded-full text-3xl"
+            style={{ background: "var(--canvas-warm)", border: "1.5px solid var(--border)" }}
+          >
+            {avatarSrc ? (
+              <img src={avatarSrc} alt={`${name}'s profile picture`} className="h-full w-full object-cover" />
+            ) : (
+              <span>{profile?.avatar_emoji ?? "🌱"}</span>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            aria-label="Upload profile picture"
+            className="absolute -bottom-1 -right-1 grid h-8 w-8 place-items-center rounded-full text-white shadow-md transition-transform hover:scale-105 disabled:opacity-60"
+            style={{ background: "var(--fern)" }}
+          >
+            {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleAvatarFile(f);
+            }}
+          />
+        </div>
+        <div className="min-w-0">
+          <h1 className="display text-3xl md:text-4xl">Profile</h1>
+          <p className="mt-1 text-sm" style={{ color: "var(--ink-soft)" }}>
+            Signed in as <strong style={{ color: "var(--delft-deep)" }}>{name}</strong>.
+          </p>
+          <p className="mt-1 text-[11px]" style={{ color: "var(--ink-soft)" }}>
+            JPG, PNG, or WEBP · up to 5MB
+          </p>
+        </div>
       </div>
+
 
       <div className="grid gap-4 md:grid-cols-2">
         {/* Badges */}
