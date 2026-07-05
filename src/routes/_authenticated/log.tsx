@@ -7,8 +7,6 @@ import { MODES, TransportMode, calcCO2Kg } from "@/lib/transport";
 const co2ForTrip = (mode: TransportMode, km: number) => calcCO2Kg(mode, km, 1);
 import { toast } from "sonner";
 import { Sparkles } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
-
 
 export const Route = createFileRoute("/_authenticated/log")({
   head: () => ({
@@ -24,9 +22,7 @@ type Trip = { mode: TransportMode; km: number };
 
 function LogPage() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const today = new Date().toISOString().slice(0, 10);
-
   const [date, setDate] = useState(today);
   const [trips, setTrips] = useState<Trip[]>([{ mode: "walk", km: 2 }]);
   const [busy, setBusy] = useState(false);
@@ -85,13 +81,9 @@ function LogPage() {
       const { error } = await supabase.from("transport_logs").insert(rows);
       if (error) throw error;
 
-      // Refresh the cached forest data so weekly CO2 / stumps update immediately.
-      await queryClient.invalidateQueries({ queryKey: ["forest"] });
-
       const tone = totalCO2 <= 2 ? "good" : totalCO2 >= 6 ? "storm" : "neutral";
       setCelebrate(tone);
       setTimeout(() => navigate({ to: "/app" }), 2200);
-
     } catch (e: any) {
       toast.error(e?.message ?? "Could not save");
       setBusy(false);

@@ -8,16 +8,13 @@ interface ForestSceneProps {
   health: ForestHealth;
   unlockedSpecies: string[];
   compact?: boolean;
-  /** Rolling 7-day sum of user's CO2 (kg). Drives the stump/weekly-budget system. */
-  weeklyCO2?: number;
 }
 
 /**
  * The main forest scene — the emotional heart of the app.
  * Grounded, layered, and continuously alive.
  */
-export function ForestScene({ health, unlockedSpecies, compact, weeklyCO2 = 0 }: ForestSceneProps) {
-
+export function ForestScene({ health, unlockedSpecies, compact }: ForestSceneProps) {
   const tod = timeOfDay();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
@@ -114,79 +111,6 @@ export function ForestScene({ health, unlockedSpecies, compact, weeklyCO2 = 0 }:
     return filtered.slice(0, Math.min(treeCount, filtered.length));
   }, [treeCount, health.stage, pondBuf]);
 
-  // ---- Weekly stump budget system ----
-  // Each tree slot has a 5 kg CO2 weekly budget. When the rolling 7-day sum exceeds
-  // trees.length * 5, the excess (in 5 kg units) converts trees to stumps.
-  // When excess drops, previously-stumped slots regrow via "sapling" for a period
-  // before returning to the normal tree.
-  const BUDGET_PER_TREE = 5;
-  const REGROW_MS = 24 * 60 * 60 * 1000; // one day as sapling before full regrow
-  const STORAGE_KEY = "forest.stumpState.v1";
-
-  const totalBudget = trees.length * BUDGET_PER_TREE;
-  const excess = weeklyCO2 - totalBudget;
-  const stumpsCount = excess > 0 ? Math.min(trees.length, Math.ceil(excess / BUDGET_PER_TREE)) : 0;
-
-  // Pick most recently grown first: front-row trees are last in the array.
-  const newStumps = new Set<number>();
-  for (let i = 0; i < stumpsCount; i++) {
-    const idx = trees.length - 1 - i;
-    if (idx >= 0) newStumps.add(idx);
-  }
-
-  const [regrowing, setRegrowing] = useState<Record<number, number>>({});
-  const [activeStumps, setActiveStumps] = useState<Set<number>>(new Set());
-
-  // Load persisted state once
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as { stumps?: number[]; regrowing?: Record<string, number> };
-        setActiveStumps(new Set(parsed.stumps ?? []));
-        const rg: Record<number, number> = {};
-        for (const [k, v] of Object.entries(parsed.regrowing ?? {})) rg[Number(k)] = Number(v);
-        setRegrowing(rg);
-      }
-    } catch {
-      /* ignore */
-    }
-  }, []);
-
-  // Reconcile whenever the computed stump set changes
-  useEffect(() => {
-    const now = Date.now();
-    setActiveStumps((prev) => {
-      const nextRegrowing: Record<number, number> = { ...regrowing };
-      // Trees that WERE stumps but are no longer → start regrowing
-      prev.forEach((i) => {
-        if (!newStumps.has(i) && nextRegrowing[i] === undefined) nextRegrowing[i] = now;
-      });
-      // Trees that ARE stumps again → cancel regrowing
-      newStumps.forEach((i) => {
-        if (nextRegrowing[i] !== undefined) delete nextRegrowing[i];
-      });
-      // Drop regrowing entries that have completed
-      for (const k of Object.keys(nextRegrowing)) {
-        if (now - nextRegrowing[Number(k)] > REGROW_MS) delete nextRegrowing[Number(k)];
-      }
-      setRegrowing(nextRegrowing);
-      try {
-        localStorage.setItem(
-          STORAGE_KEY,
-          JSON.stringify({ stumps: [...newStumps], regrowing: nextRegrowing }),
-        );
-      } catch {
-        /* ignore */
-      }
-      return new Set(newStumps);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stumpsCount, trees.length]);
-
-
-
   // Dense grass tufts — clustered, varied heights & shades, avoiding pond
   const grasses = useMemo(() => {
     const rng = mulberry32(42);
@@ -255,27 +179,6 @@ export function ForestScene({ health, unlockedSpecies, compact, weeklyCO2 = 0 }:
         contain: "paint",
       }}
     >
-      {/* DEBUG: stump math (temporary — remove when verified) */}
-      <div
-        style={{
-          position: "absolute",
-          top: 8,
-          left: 8,
-          zIndex: 500,
-          padding: "6px 10px",
-          borderRadius: 8,
-          background: "rgba(0,0,0,0.7)",
-          color: "white",
-          fontSize: 11,
-          fontFamily: "monospace",
-          lineHeight: 1.4,
-          pointerEvents: "none",
-        }}
-      >
-        trees: {trees.length} · weekly: {weeklyCO2.toFixed(1)}kg · budget:{" "}
-        {totalBudget}kg · excess: {excess.toFixed(1)}kg · stumps: {stumpsCount}
-      </div>
-
       {/* Sun / moon */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
@@ -440,17 +343,7 @@ export function ForestScene({ health, unlockedSpecies, compact, weeklyCO2 = 0 }:
                   transformOrigin: "bottom center",
                 }}
               >
-                <Tree
-                  stage={
-                    activeStumps.has(i)
-                      ? "stump"
-                      : regrowing[i] !== undefined
-                      ? "sapling"
-                      : "mature"
-                  }
-                  delay={Math.min(i * 0.03, 0.9)}
-                />
-
+                <Tree stage="mature" delay={Math.min(i * 0.03, 0.9)} />
 
               </div>
             </div>

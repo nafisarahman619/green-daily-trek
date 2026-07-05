@@ -66,7 +66,7 @@ function AppHome() {
       </div>
 
       {/* Main scene */}
-      <ForestScene health={health} unlockedSpecies={data.unlocks} weeklyCO2={data.weeklyCO2} />
+      <ForestScene health={health} unlockedSpecies={data.unlocks} />
 
       {/* Metrics */}
       <div className="mt-6 grid gap-3 md:grid-cols-4">
