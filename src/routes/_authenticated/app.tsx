@@ -10,6 +10,7 @@ import { Sparkles, Sprout, TrendingDown, TreePine, Cloud } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { SPECIES } from "@/lib/wildlife";
 import { timeOfDay, DAILY_BASELINE_KG } from "@/lib/transport";
+import { TreesToPlantCard } from "@/components/forest/TreesToPlantCard";
 
 export const Route = createFileRoute("/_authenticated/app")({
   head: () => ({
@@ -74,6 +75,11 @@ function AppHome() {
         <Metric label="CO₂ tracked" value={data.totalCO2.toFixed(1)} suffix=" kg" tone="delft" hint={`across ${data.totalLogs} days`} />
         <Metric label="Low-emission days" value={String(data.goodDays)} tone="pistachio" hint={`≤ ${DAILY_BASELINE_KG} kg/day`} />
         <Metric label="Trees standing" value={String(health.treeCount)} tone="fern" hint={health.isStorm ? "Storm rolling through" : "Fair skies"} icon={<TreePine className="h-4 w-4" />} />
+      </div>
+
+      {/* Trees to plant */}
+      <div className="mt-3">
+        <TreesToPlantCard userId={data.userId} logs={data.logs} />
       </div>
 
       {/* Wildlife journal */}
