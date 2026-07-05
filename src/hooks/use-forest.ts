@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { computeHealth, DAILY_BASELINE_KG, modeById } from "@/lib/transport";
+import { computeHealth, DAILY_BASELINE_KG } from "@/lib/transport";
 import { evaluateUnlocks, SPECIES } from "@/lib/wildlife";
 import { useEffect, useMemo, useState } from "react";
 
