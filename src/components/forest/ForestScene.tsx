@@ -323,11 +323,8 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
                   transformOrigin: "bottom center",
                 }}
               >
-                {isFar ? (
-                  <SimpleTree color="var(--fern-deep)" />
-                ) : (
-                  <Tree stage={t.stage} delay={Math.min(i * 0.03, 0.9)} />
-                )}
+                <Tree stage={t.stage} delay={Math.min(i * 0.03, 0.9)} />
+
               </div>
             </div>
           );
