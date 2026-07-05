@@ -67,9 +67,9 @@ export function computeHealth(recent: { co2_kg: number; log_date: string }[]): F
     return { score: 100, stage: "mature", treeCount: 48, isStorm: false, streakGoodDays: 0 };
   }
 
-  // Average CO2 across today's trips
-  const avg = todays.reduce((s, r) => s + Number(r.co2_kg), 0) / todays.length;
-  const deficit = DAILY_BASELINE_KG - avg;
+  // Sum ALL of today's trips (day total emissions), not average per trip.
+  const dayTotal = todays.reduce((s, r) => s + Number(r.co2_kg), 0);
+  const deficit = DAILY_BASELINE_KG - dayTotal;
   const score = Math.max(5, Math.min(100, Math.round(55 + deficit * 12)));
 
   const stage =
@@ -84,7 +84,7 @@ export function computeHealth(recent: { co2_kg: number; log_date: string }[]): F
     score >= 25 ? 12 : 6;
 
   const isStorm = false;
-  const streakGoodDays = avg <= DAILY_BASELINE_KG ? 1 : 0;
+  const streakGoodDays = dayTotal <= DAILY_BASELINE_KG ? 1 : 0;
 
   return { score, stage, treeCount, isStorm, streakGoodDays };
 }
