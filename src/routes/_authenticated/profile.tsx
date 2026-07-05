@@ -100,11 +100,12 @@ function ProfilePage() {
     setResetting(true);
     try {
       const uid = data.userId;
-      const [logs, unlocks] = await Promise.all([
+      const [logs, unlocks, plantings] = await Promise.all([
         supabase.from("transport_logs").delete().eq("user_id", uid),
         supabase.from("wildlife_unlocks").delete().eq("user_id", uid),
+        supabase.from("tree_plantings").delete().eq("user_id", uid),
       ]);
-      if (logs.error || unlocks.error) throw logs.error || unlocks.error;
+      if (logs.error || unlocks.error || plantings.error) throw logs.error || unlocks.error || plantings.error;
       await qc.invalidateQueries();
       toast.success("Your forest has been reset to a fresh clearing.");
       setConfirmReset(false);
