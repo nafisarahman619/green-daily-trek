@@ -288,20 +288,60 @@ export function Creature({ id, variant = 1 }: { id: string; variant?: 1 | 2 | 3 
       );
     case "bird":
       return (
-        <svg viewBox="0 0 50 40" style={{ width: 44, height: 36, overflow: "visible" }}>
-          <ellipse cx="26" cy="24" rx="14" ry="9" fill="oklch(0.55 0.13 240)" />
-          <circle cx="37" cy="19" r="6.5" fill="oklch(0.58 0.13 240)" />
-          <path d="M12 24 Q4 18 8 30 Z" fill="oklch(0.42 0.12 245)" />
-          <circle cx="39" cy="17" r="1.4" fill="white" />
-          <circle cx="39.3" cy="17" r="0.6" fill={TRUNK_DARK} />
-          <path d="M43 19 L49 21 L43 23 Z" fill="oklch(0.7 0.15 55)" />
-          {/* Flapping wing — pivots at shoulder */}
-          <g style={{ transformOrigin: "24px 22px", animation: "bird-flap 0.35s ease-in-out infinite" }}>
-            <path d="M24 22 Q 18 12 6 16 Q 16 20 24 22 Z" fill="oklch(0.5 0.13 240)" />
-            <path d="M24 22 Q 20 15 10 17" stroke="oklch(0.38 0.1 245)" strokeWidth="0.6" fill="none" />
+        <svg viewBox="0 0 60 44" style={{ width: 52, height: 40, overflow: "visible" }}>
+          <defs>
+            <radialGradient id="bird-body" cx="40%" cy="40%" r="70%">
+              <stop offset="0%" stopColor="oklch(0.72 0.14 235)" />
+              <stop offset="55%" stopColor="oklch(0.55 0.14 240)" />
+              <stop offset="100%" stopColor="oklch(0.34 0.11 250)" />
+            </radialGradient>
+            <linearGradient id="bird-belly" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="oklch(0.9 0.06 80)" />
+              <stop offset="100%" stopColor="oklch(0.78 0.09 55)" />
+            </linearGradient>
+            <linearGradient id="bird-wing" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="oklch(0.55 0.14 240)" />
+              <stop offset="100%" stopColor="oklch(0.3 0.1 250)" />
+            </linearGradient>
+          </defs>
+          {/* Tail feathers */}
+          <path d="M10 24 Q2 20 4 28 L10 26 Z" fill="oklch(0.32 0.1 250)" />
+          <path d="M10 25 Q3 24 5 31 L11 28 Z" fill="oklch(0.4 0.12 245)" />
+          {/* Body */}
+          <ellipse cx="28" cy="26" rx="16" ry="10" fill="url(#bird-body)" />
+          {/* Belly highlight */}
+          <ellipse cx="28" cy="30" rx="12" ry="5.5" fill="url(#bird-belly)" opacity="0.85" />
+          {/* Body feather hints */}
+          <path d="M18 24 Q22 26 26 24" stroke="oklch(0.35 0.1 248 / 0.5)" strokeWidth="0.5" fill="none" />
+          <path d="M20 28 Q24 30 28 28" stroke="oklch(0.35 0.1 248 / 0.4)" strokeWidth="0.5" fill="none" />
+          <path d="M26 24 Q30 26 34 24" stroke="oklch(0.35 0.1 248 / 0.4)" strokeWidth="0.5" fill="none" />
+          {/* Head */}
+          <circle cx="42" cy="20" r="8" fill="url(#bird-body)" />
+          {/* Cheek/crown accent */}
+          <path d="M38 15 Q42 12 47 15 Q46 18 42 18 Q39 18 38 15 Z" fill="oklch(0.32 0.11 250)" opacity="0.75" />
+          {/* Eye */}
+          <circle cx="44.5" cy="18.5" r="1.8" fill="oklch(0.15 0.02 250)" />
+          <circle cx="44.5" cy="18.5" r="1.8" fill="none" stroke="oklch(0.95 0.02 90)" strokeWidth="0.4" />
+          <circle cx="45" cy="18" r="0.55" fill="white" />
+          {/* Beak — upper + lower */}
+          <path d="M49 19 L57 20.2 L49 21.5 Z" fill="oklch(0.68 0.16 55)" />
+          <path d="M49 21 L56 21 L49 22 Z" fill="oklch(0.55 0.15 45)" />
+          <path d="M49 20 L56 20.6" stroke="oklch(0.3 0.08 45)" strokeWidth="0.35" />
+          {/* Legs (subtle, visible when perched) */}
+          <path d="M26 34 L25 39 M32 34 L33 39" stroke="oklch(0.35 0.08 45)" strokeWidth="0.9" strokeLinecap="round" />
+          <path d="M23 39 L27 39 M31 39 L35 39" stroke="oklch(0.3 0.07 45)" strokeWidth="0.9" strokeLinecap="round" />
+          {/* Flapping wing — pivots at shoulder, with feather layers */}
+          <g style={{ transformOrigin: "26px 22px", animation: "bird-flap 0.35s ease-in-out infinite" }}>
+            <path d="M26 22 Q 18 8 2 12 Q 14 20 26 22 Z" fill="url(#bird-wing)" />
+            <path d="M26 22 Q 20 12 6 14" stroke="oklch(0.22 0.08 250)" strokeWidth="0.5" fill="none" />
+            <path d="M24 22 Q 20 16 10 18" stroke="oklch(0.25 0.09 250)" strokeWidth="0.5" fill="none" />
+            <path d="M22 22 Q 20 19 14 21" stroke="oklch(0.28 0.09 250)" strokeWidth="0.5" fill="none" />
+            {/* Primary feather tips */}
+            <path d="M8 13 L4 11 M12 14 L8 10 M16 16 L14 11" stroke="oklch(0.2 0.08 250)" strokeWidth="0.5" strokeLinecap="round" />
           </g>
         </svg>
       );
+
     case "firefly":
       return (
         <svg viewBox="0 0 30 30" style={{ width: 30, height: 30, overflow: "visible" }}>
