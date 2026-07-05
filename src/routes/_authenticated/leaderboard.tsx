@@ -6,6 +6,9 @@ import { DAILY_BASELINE_KG } from "@/lib/transport";
 import { Tree } from "@/components/forest/Tree";
 import { motion } from "framer-motion";
 import { Trophy } from "lucide-react";
+import { signAvatarUrls } from "@/lib/avatars";
+
+
 
 export const Route = createFileRoute("/_authenticated/leaderboard")({
   head: () => ({
