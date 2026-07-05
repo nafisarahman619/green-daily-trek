@@ -498,14 +498,64 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
           <motion.div
             key="owl"
             className="absolute"
-            style={{ left: "18%", bottom: "42%", zIndex: 195 }}
+            style={{ left: "24%", bottom: "26%", zIndex: 55 }}
             initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: [0, -2, 0] }}
+            animate={{ opacity: 1, y: [0, -1.5, 0] }}
             transition={{ opacity: { duration: 0.8 }, y: { duration: 4, repeat: Infinity, ease: "easeInOut" } }}
           >
-            <Creature id="owl" />
+            <div style={{ position: "relative" }}>
+              {/* Branch under owl */}
+              <div
+                aria-hidden
+                style={{
+                  position: "absolute",
+                  left: "50%",
+                  bottom: -3,
+                  width: 46,
+                  height: 4,
+                  transform: "translateX(-50%) rotate(-4deg)",
+                  background: "linear-gradient(180deg, oklch(0.32 0.05 45), oklch(0.22 0.04 40))",
+                  borderRadius: 2,
+                  boxShadow: "0 1px 0 oklch(0.14 0.03 40 / 0.6)",
+                }}
+              />
+              <Creature id="owl" />
+              {/* Leaves tucked in front, partially overlapping the owl */}
+              <svg
+                aria-hidden
+                viewBox="0 0 60 40"
+                style={{
+                  position: "absolute",
+                  left: -14,
+                  top: -6,
+                  width: 42,
+                  height: 30,
+                  pointerEvents: "none",
+                }}
+              >
+                <ellipse cx="14" cy="18" rx="12" ry="9" fill="oklch(0.32 0.09 145)" opacity="0.95" />
+                <ellipse cx="24" cy="10" rx="10" ry="7" fill="oklch(0.36 0.1 150)" opacity="0.9" />
+                <ellipse cx="8" cy="26" rx="8" ry="6" fill="oklch(0.28 0.08 145)" opacity="0.9" />
+              </svg>
+              <svg
+                aria-hidden
+                viewBox="0 0 60 40"
+                style={{
+                  position: "absolute",
+                  right: -12,
+                  top: 4,
+                  width: 36,
+                  height: 26,
+                  pointerEvents: "none",
+                }}
+              >
+                <ellipse cx="42" cy="18" rx="12" ry="8" fill="oklch(0.3 0.09 148)" opacity="0.92" />
+                <ellipse cx="50" cy="26" rx="8" ry="6" fill="oklch(0.26 0.08 145)" opacity="0.9" />
+              </svg>
+            </div>
           </motion.div>
         )}
+
         {tod === "night" && unlockedSpecies.includes("nightVisitor") && (
           <>
             <motion.div
