@@ -28,9 +28,12 @@ function ProfilePage() {
   const { enabled: soundOn, setEnabled: setSoundOn } = useSoundPref();
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const [profile, setProfile] = useState<{ display_name: string } | null>(null);
+  const [profile, setProfile] = useState<{ display_name: string; avatar_emoji: string; avatar_url: string | null } | null>(null);
+  const [avatarSrc, setAvatarSrc] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -38,12 +41,48 @@ function ProfilePage() {
       if (!user.user) return;
       const { data: p } = await supabase
         .from("profiles")
-        .select("display_name")
+        .select("display_name, avatar_emoji, avatar_url")
         .eq("id", user.user.id)
         .maybeSingle();
       setProfile(p as any);
+      if (p?.avatar_url) setAvatarSrc(await signAvatarUrl(p.avatar_url));
     })();
   }, []);
+
+  const handleAvatarFile = async (file: File) => {
+    if (!AVATAR_ACCEPT.includes(file.type)) {
+      toast.error("Please choose a JPG, PNG, or WEBP image.");
+      return;
+    }
+    if (file.size > AVATAR_MAX_BYTES) {
+      toast.error("Image must be 5MB or smaller.");
+      return;
+    }
+    setUploading(true);
+    try {
+      const uid = data!.userId;
+      const ext = file.name.split(".").pop()?.toLowerCase() || (file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg");
+      const path = `${uid}/avatar-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from(AVATAR_BUCKET).upload(path, file, {
+        cacheControl: "3600",
+        upsert: true,
+        contentType: file.type,
+      });
+      if (upErr) throw upErr;
+      const { error: dbErr } = await supabase.from("profiles").update({ avatar_url: path }).eq("id", uid);
+      if (dbErr) throw dbErr;
+      setProfile((prev) => (prev ? { ...prev, avatar_url: path } : prev));
+      setAvatarSrc(await signAvatarUrl(path));
+      await qc.invalidateQueries({ queryKey: ["leaderboard"] });
+      toast.success("Profile picture updated.");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not upload picture.");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
 
   if (isLoading || !data) return <LoadingSeedling label="Loading your profile…" />;
 
