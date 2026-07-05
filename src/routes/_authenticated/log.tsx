@@ -22,7 +22,13 @@ type Trip = { mode: TransportMode; km: number };
 
 function LogPage() {
   const navigate = useNavigate();
-  const today = new Date().toISOString().slice(0, 10);
+  const today = (() => {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  })();
   const [date, setDate] = useState(today);
   const [trips, setTrips] = useState<Trip[]>([{ mode: "walk", km: 2 }]);
   const [busy, setBusy] = useState(false);
