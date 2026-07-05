@@ -118,12 +118,50 @@ function ProfilePage() {
   return (
     <AppShell>
 
-      <div className="mb-6">
-        <h1 className="display text-3xl md:text-4xl">Profile</h1>
-        <p className="mt-1 text-sm" style={{ color: "var(--ink-soft)" }}>
-          Signed in as <strong style={{ color: "var(--delft-deep)" }}>{name}</strong>.
-        </p>
+      <div className="mb-6 flex items-center gap-4">
+        <div className="relative">
+          <div
+            className="grid h-20 w-20 place-items-center overflow-hidden rounded-full text-3xl"
+            style={{ background: "var(--canvas-warm)", border: "1.5px solid var(--border)" }}
+          >
+            {avatarSrc ? (
+              <img src={avatarSrc} alt={`${name}'s profile picture`} className="h-full w-full object-cover" />
+            ) : (
+              <span>{profile?.avatar_emoji ?? "🌱"}</span>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            aria-label="Upload profile picture"
+            className="absolute -bottom-1 -right-1 grid h-8 w-8 place-items-center rounded-full text-white shadow-md transition-transform hover:scale-105 disabled:opacity-60"
+            style={{ background: "var(--fern)" }}
+          >
+            {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleAvatarFile(f);
+            }}
+          />
+        </div>
+        <div className="min-w-0">
+          <h1 className="display text-3xl md:text-4xl">Profile</h1>
+          <p className="mt-1 text-sm" style={{ color: "var(--ink-soft)" }}>
+            Signed in as <strong style={{ color: "var(--delft-deep)" }}>{name}</strong>.
+          </p>
+          <p className="mt-1 text-[11px]" style={{ color: "var(--ink-soft)" }}>
+            JPG, PNG, or WEBP · up to 5MB
+          </p>
+        </div>
       </div>
+
 
       <div className="grid gap-4 md:grid-cols-2">
         {/* Badges */}
