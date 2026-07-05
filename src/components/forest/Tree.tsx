@@ -34,6 +34,11 @@ const TRUNK_DARK = "oklch(0.25 0.04 45)";
 export function Tree({ stage, wilted, delay = 0, scale = 1 }: TreeProps) {
   const c = wilted ? WILT : GREEN;
   const swayClass = stage === "seedling" ? "sway-fast" : "sway-slow";
+  const uid = useId().replace(/:/g, "");
+  const canopyGrad = `cg-${uid}`;
+  const trunkGrad = `tg-${uid}`;
+  const shadowGrad = `sg-${uid}`;
+
 
   return (
     <motion.svg
