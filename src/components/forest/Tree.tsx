@@ -304,13 +304,15 @@ export function Creature({ id, variant = 1 }: { id: string; variant?: 1 | 2 | 3 
       );
     case "firefly":
       return (
-        <svg viewBox="0 0 30 30" style={{ width: 30, height: 30, overflow: "visible" }}>
+        <svg viewBox="0 0 30 30" style={{ width: 18, height: 18, overflow: "visible", filter: "drop-shadow(0 0 6px oklch(0.95 0.2 100 / 0.9)) drop-shadow(0 0 12px oklch(0.9 0.22 105 / 0.7))" }}>
           <g className="firefly">
-            <circle cx="15" cy="15" r="6" fill="oklch(0.9 0.18 100)" opacity="0.5" />
-            <circle cx="15" cy="15" r="3" fill="oklch(0.98 0.15 100)" />
+            <circle cx="15" cy="15" r="7" fill="oklch(0.95 0.18 100)" opacity="0.35" />
+            <circle cx="15" cy="15" r="3.5" fill="oklch(0.95 0.2 100)" opacity="0.75" />
+            <circle cx="15" cy="15" r="1.6" fill="oklch(1 0.05 100)" />
           </g>
         </svg>
       );
+
     case "deer":
       return (
         <svg viewBox="0 0 70 60" style={{ width: 60, height: 52 }}>
