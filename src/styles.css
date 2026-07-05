@@ -417,14 +417,13 @@
    own gradients and is unaffected.
    ========================================================= */
 
+/* Tiers ONLY override accent + decorative tokens.
+   Base surface tokens (--canvas, --canvas-warm, --canvas-deep, --paper,
+   --ink, --ink-soft, --border, --input) intentionally stay out of these
+   blocks so the Light/Dark toggle (.dark on <html>) fully owns base
+   contrast. Accents layer on top of either base. */
+
 [data-forest-theme="withering"] {
-  --canvas: oklch(0.86 0.015 90);
-  --canvas-warm: oklch(0.82 0.02 80);
-  --canvas-deep: oklch(0.76 0.025 75);
-  --paper: oklch(0.9 0.012 90);
-  --ink: oklch(0.28 0.02 260);
-  --ink-soft: oklch(0.5 0.02 260);
-  --border: oklch(0.72 0.02 80);
   --pistachio: oklch(0.72 0.05 120);
   --pistachio-soft: oklch(0.8 0.03 120);
   --fern: oklch(0.42 0.06 130);
@@ -432,40 +431,36 @@
   --fern-shade: oklch(0.3 0.05 132);
   --primary: var(--fern);
   --accent: var(--pistachio);
+  --shadow-leaf: 0 20px 40px -22px oklch(0.3 0.05 132 / 0.28);
 }
 
 [data-forest-theme="recovering"] {
-  --canvas: oklch(0.92 0.025 105);
-  --canvas-warm: oklch(0.88 0.035 100);
-  --canvas-deep: oklch(0.82 0.045 100);
-  --paper: oklch(0.96 0.02 105);
   --pistachio: oklch(0.78 0.1 128);
+  --pistachio-soft: oklch(0.86 0.07 128);
   --fern: oklch(0.46 0.11 130);
   --fern-glow: oklch(0.56 0.13 130);
-  --border: oklch(0.82 0.03 100);
+  --fern-shade: oklch(0.32 0.09 132);
+  --primary: var(--fern);
+  --accent: var(--pistachio);
 }
 
 [data-forest-theme="thriving"] {
-  --canvas: oklch(0.95 0.045 120);
-  --canvas-warm: oklch(0.9 0.06 125);
-  --paper: oklch(0.985 0.02 115);
   --pistachio: oklch(0.84 0.16 128);
   --pistachio-soft: oklch(0.91 0.11 128);
   --fern: oklch(0.5 0.16 132);
   --fern-glow: oklch(0.62 0.18 130);
+  --fern-shade: oklch(0.34 0.13 132);
+  --primary: var(--fern);
   --accent: var(--pistachio);
 }
 
 [data-forest-theme="flourishing"] {
-  --canvas: oklch(0.96 0.05 105);
-  --canvas-warm: oklch(0.93 0.07 90);
-  --canvas-deep: oklch(0.88 0.09 80);
-  --paper: oklch(0.99 0.025 100);
   --pistachio: oklch(0.86 0.17 128);
   --pistachio-soft: oklch(0.92 0.12 128);
   --fern: oklch(0.52 0.18 132);
   --fern-glow: oklch(0.66 0.2 130);
   --fern-shade: oklch(0.34 0.14 138);
+  --primary: var(--fern);
   --accent: oklch(0.82 0.14 20);
   --shadow-leaf: 0 20px 40px -18px oklch(0.5 0.18 20 / 0.28);
 }
