@@ -18,6 +18,22 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
   const tod = timeOfDay();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
+  const [containerW, setContainerW] = useState(1000);
+
+  // Track container width so we can scale down tree pixel sizes on narrow screens.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      for (const e of entries) setContainerW(e.contentRect.width);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const isMobile = containerW < 500;
+  // Scale trees down proportionally on narrow screens (keeps shape, tightens footprint).
+  const mobileTreeScale = isMobile ? Math.max(0.5, containerW / 640) : 1;
 
   // Subtle mouse parallax (background only — foreground stays anchored to ground)
   useEffect(() => {
@@ -38,6 +54,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
     };
   }, []);
 
+
   const skyGradient = useMemo(() => {
     switch (tod) {
       case "dawn": return "linear-gradient(180deg, var(--sky-dawn-a), var(--sky-dawn-b) 55%, var(--canvas-warm))";
@@ -56,8 +73,11 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
   // Pond geometry (percent, in scene coordinates). Flowers/grass must avoid this rect.
   const POND = { left: 58, right: 92, bottomMin: 4, bottomMax: 14 };
 
+  // On mobile, trees render larger relative to the pond, so widen the exclusion buffer.
+  const pondBuf = isMobile ? 6 : 2;
   const inPond = (x: number, base: number) =>
-    x >= POND.left - 2 && x <= POND.right + 2 && base >= POND.bottomMin - 1 && base <= POND.bottomMax + 2;
+    x >= POND.left - pondBuf && x <= POND.right + pondBuf && base >= POND.bottomMin - 1 && base <= POND.bottomMax + pondBuf;
+
 
   // Deterministic dense forest — up to ~50 trees, back rows smaller (depth).
   // Each tree gets its own x, base (from ground), scale, and stage bias.
@@ -89,7 +109,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
     const filtered = all.filter((t) => !inPond(t.x, t.base));
     // Slice to current treeCount, preferring a balanced mix (interleave back/mid/front)
     return filtered.slice(0, Math.min(treeCount, filtered.length));
-  }, [treeCount, health.stage]);
+  }, [treeCount, health.stage, pondBuf]);
 
   // Dense grass tufts — clustered, varied heights & shades, avoiding pond
   const grasses = useMemo(() => {
@@ -286,7 +306,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
           // Slimmer, slightly rounder, moderately smaller — applied uniformly to every stage.
           const shapeScaleX = 0.72;
           const shapeScaleY = 0.9;
-          const sizeMul = 0.7;
+          const sizeMul = 0.7 * mobileTreeScale;
 
           return (
             <div
