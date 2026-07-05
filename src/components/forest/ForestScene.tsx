@@ -498,78 +498,28 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
           <motion.div
             key="owl"
             className="absolute"
-            style={{ left: "24%", bottom: "26%", zIndex: 150 }}
+            style={{ left: "18%", bottom: "6%", zIndex: 195 }}
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: [0, -1.5, 0] }}
             transition={{ opacity: { duration: 0.8 }, y: { duration: 4, repeat: Infinity, ease: "easeInOut" } }}
           >
             <div style={{ position: "relative" }}>
-              {/* Branch under owl — wider, textured perch that clearly reads */}
+              {/* Ground shadow under the owl (matches other ground creatures) */}
               <div
                 aria-hidden
                 style={{
                   position: "absolute",
                   left: "50%",
-                  bottom: -6,
-                  width: 92,
-                  height: 8,
-                  transform: "translateX(-50%) rotate(-3deg)",
-                  background: "linear-gradient(180deg, oklch(0.42 0.06 45), oklch(0.24 0.05 40))",
-                  borderRadius: 4,
-                  boxShadow: "0 2px 0 oklch(0.14 0.03 40 / 0.55), inset 0 1px 0 oklch(0.6 0.05 50 / 0.4)",
-                }}
-              />
-              {/* Small twig off the branch for detail */}
-              <div
-                aria-hidden
-                style={{
-                  position: "absolute",
-                  left: "78%",
-                  bottom: -2,
-                  width: 18,
-                  height: 3,
-                  transform: "rotate(-25deg)",
-                  background: "linear-gradient(180deg, oklch(0.38 0.06 45), oklch(0.24 0.05 40))",
-                  borderRadius: 2,
+                  bottom: -4,
+                  width: 52,
+                  height: 10,
+                  transform: "translateX(-50%)",
+                  background: "radial-gradient(ellipse at center, oklch(0.15 0.04 60 / 0.32), transparent 70%)",
+                  filter: "blur(2px)",
                 }}
               />
               <Creature id="owl" />
-              {/* Soft leaves — lighter, blurred, gently nestling the owl (not blobby) */}
-              <svg
-                aria-hidden
-                viewBox="0 0 60 40"
-                style={{
-                  position: "absolute",
-                  left: -18,
-                  top: -4,
-                  width: 38,
-                  height: 26,
-                  pointerEvents: "none",
-                  filter: "blur(0.6px)",
-                  opacity: 0.55,
-                }}
-              >
-                <ellipse cx="16" cy="20" rx="11" ry="7" fill="oklch(0.55 0.13 145)" />
-                <ellipse cx="24" cy="12" rx="8" ry="5" fill="oklch(0.6 0.13 150)" />
-              </svg>
-              <svg
-                aria-hidden
-                viewBox="0 0 60 40"
-                style={{
-                  position: "absolute",
-                  right: -14,
-                  top: 6,
-                  width: 32,
-                  height: 22,
-                  pointerEvents: "none",
-                  filter: "blur(0.6px)",
-                  opacity: 0.5,
-                }}
-              >
-                <ellipse cx="40" cy="18" rx="11" ry="6" fill="oklch(0.55 0.13 148)" />
-              </svg>
             </div>
-
           </motion.div>
         )}
 
@@ -580,14 +530,16 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
               className="absolute"
               style={{ left: "62%", bottom: "8%", zIndex: 195, filter: "brightness(0.55) saturate(0.7)" }}
               initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 0.85, x: [0, 6, 0] }}
-              transition={{ opacity: { duration: 1 }, x: { duration: 8, repeat: Infinity, ease: "easeInOut" } }}
+              animate={{ opacity: 1, x: 0 }}
             >
-              <Creature id="fox" />
+              <div style={{ position: "relative" }}>
+                <div aria-hidden style={{ position: "absolute", left: "50%", bottom: -4, width: 56, height: 10, transform: "translateX(-50%)", background: "radial-gradient(ellipse at center, oklch(0.15 0.04 60 / 0.32), transparent 70%)", filter: "blur(2px)" }} />
+                <Creature id="fox" />
+              </div>
             </motion.div>
-            {[0, 1, 2, 3, 4].map((i) => (
+            {[0, 1, 2, 3].map((i) => (
               <motion.div
-                key={`ffx-${i}`}
+                key={`nf-${i}`}
                 className="absolute"
                 style={{ left: `${55 + i * 7}%`, bottom: `${18 + (i % 2) * 8}%`, zIndex: 201 }}
                 animate={{ x: [0, 10, -6, 4, 0], y: [0, -8, -3, -12, 0], opacity: [0.3, 1, 0.5, 1, 0.3] }}
@@ -599,6 +551,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
           </>
         )}
       </AnimatePresence>
+
 
 
       {/* Storm overlay */}
