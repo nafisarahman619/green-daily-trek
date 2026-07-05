@@ -58,25 +58,18 @@ export interface ForestHealth {
 }
 
 export function computeHealth(recent: { co2_kg: number; log_date: string }[]): ForestHealth {
-  // Group by date, sum daily CO2
-  const byDate = new Map<string, number>();
-  recent.forEach((r) => {
-    byDate.set(r.log_date, (byDate.get(r.log_date) ?? 0) + Number(r.co2_kg));
-  });
-  const days = [...byDate.entries()]
-    .sort((a, b) => (a[0] < b[0] ? 1 : -1))
-    .slice(0, 14);
+  // Today-only: forest resets each new day and reflects only today's trips.
+  const today = new Date().toISOString().slice(0, 10);
+  const todays = recent.filter((r) => r.log_date === today);
 
-  if (days.length === 0) {
-    // New user with no logs: default to a fully grown, healthy forest.
+  if (todays.length === 0) {
+    // No trips logged today: fully healthy default.
     return { score: 100, stage: "mature", treeCount: 48, isStorm: false, streakGoodDays: 0 };
   }
 
-
-  // Average deficit vs baseline
-  const avg = days.reduce((s, [, v]) => s + v, 0) / days.length;
+  // Average CO2 across today's trips
+  const avg = todays.reduce((s, r) => s + Number(r.co2_kg), 0) / todays.length;
   const deficit = DAILY_BASELINE_KG - avg;
-  // Map deficit to score around 55 midpoint
   const score = Math.max(5, Math.min(100, Math.round(55 + deficit * 12)));
 
   const stage =
@@ -90,19 +83,10 @@ export function computeHealth(recent: { co2_kg: number; log_date: string }[]): F
     score >= 45 ? 22 :
     score >= 25 ? 12 : 6;
 
-  // Storm = 3 of last 4 days above baseline
-  const last4 = days.slice(0, 4);
-  const bad = last4.filter(([, v]) => v > DAILY_BASELINE_KG).length;
-  const isStorm = last4.length >= 3 && bad >= 3;
+  const isStorm = avg > DAILY_BASELINE_KG * 1.5;
+  const streakGoodDays = avg <= DAILY_BASELINE_KG ? 1 : 0;
 
-  // Streak of good days
-  let streak = 0;
-  for (const [, v] of days) {
-    if (v <= DAILY_BASELINE_KG) streak++;
-    else break;
-  }
-
-  return { score, stage, treeCount, isStorm, streakGoodDays: streak };
+  return { score, stage, treeCount, isStorm, streakGoodDays };
 }
 
 export function timeOfDay(): "dawn" | "day" | "dusk" | "night" {
