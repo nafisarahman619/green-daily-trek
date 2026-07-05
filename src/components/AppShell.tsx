@@ -84,7 +84,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </nav>
       </header>
-      <main className="mx-auto max-w-6xl px-4 py-6 md:py-10">{children}</main>
+      <main className="mx-auto max-w-6xl px-4 py-6 md:py-10">
+        {children}
+        <div className="pointer-events-none fixed bottom-3 right-3 z-20 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider" style={{ background: "color-mix(in oklab, var(--paper) 85%, transparent)", color: "var(--fern-shade)", border: "1px solid var(--border)" }}>
+          {tierLabel(tier)}
+        </div>
+      </main>
+      </div>
     </div>
   );
 }
+
