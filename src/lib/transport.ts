@@ -69,8 +69,10 @@ export function computeHealth(recent: { co2_kg: number; log_date: string }[]): F
 
   // Sum ALL of today's trips (day total emissions), not average per trip.
   const dayTotal = todays.reduce((s, r) => s + Number(r.co2_kg), 0);
-  const deficit = DAILY_BASELINE_KG - dayTotal;
-  const score = Math.max(5, Math.min(100, Math.round(55 + deficit * 12)));
+  // Health scales inversely with CO2: 0 kg -> 100, MAX_KG -> 0. Clamped 0..100.
+  const MAX_KG = 20;
+  const score = Math.max(0, Math.min(100, Math.round(100 * (1 - dayTotal / MAX_KG))));
+
 
   const stage =
     score >= 82 ? "mature" :
