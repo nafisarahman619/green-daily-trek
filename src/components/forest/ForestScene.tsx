@@ -527,38 +527,38 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
               >
                 <Creature id="owl" />
               </motion.div>
-              {/* Leaves tucked in front, partially overlapping owl's sides (not the head) */}
+              {/* Leaves tucked in front, partially overlapping the owl */}
               <svg
                 aria-hidden
                 viewBox="0 0 60 40"
                 style={{
                   position: "absolute",
-                  left: -20,
-                  bottom: 4,
-                  width: 40,
+                  left: -18,
+                  top: 4,
+                  width: 42,
+                  height: 30,
+                  pointerEvents: "none",
+                }}
+              >
+                <ellipse cx="14" cy="18" rx="12" ry="9" fill="oklch(0.32 0.09 145)" opacity="0.95" />
+                <ellipse cx="24" cy="10" rx="10" ry="7" fill="oklch(0.36 0.1 150)" opacity="0.9" />
+                <ellipse cx="8" cy="26" rx="8" ry="6" fill="oklch(0.28 0.08 145)" opacity="0.9" />
+              </svg>
+              <svg
+                aria-hidden
+                viewBox="0 0 60 40"
+                style={{
+                  position: "absolute",
+                  right: -16,
+                  top: 14,
+                  width: 36,
                   height: 26,
                   pointerEvents: "none",
                 }}
               >
-                <ellipse cx="14" cy="22" rx="12" ry="8" fill="oklch(0.32 0.09 145)" opacity="0.95" />
-                <ellipse cx="8" cy="30" rx="8" ry="6" fill="oklch(0.28 0.08 145)" opacity="0.9" />
+                <ellipse cx="42" cy="18" rx="12" ry="8" fill="oklch(0.3 0.09 148)" opacity="0.92" />
+                <ellipse cx="50" cy="26" rx="8" ry="6" fill="oklch(0.26 0.08 145)" opacity="0.9" />
               </svg>
-              <svg
-                aria-hidden
-                viewBox="0 0 60 40"
-                style={{
-                  position: "absolute",
-                  right: -18,
-                  bottom: 6,
-                  width: 36,
-                  height: 24,
-                  pointerEvents: "none",
-                }}
-              >
-                <ellipse cx="42" cy="22" rx="12" ry="7" fill="oklch(0.3 0.09 148)" opacity="0.92" />
-                <ellipse cx="50" cy="30" rx="8" ry="6" fill="oklch(0.26 0.08 145)" opacity="0.9" />
-              </svg>
-
             </div>
           </motion.div>
         )}
