@@ -134,8 +134,8 @@ function LeaderboardPage() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="display text-2xl" style={{ color: "var(--fern-shade)" }}>{r.score}</p>
-                  <p className="text-[10px] uppercase tracking-wider" style={{ color: "var(--ink-soft)" }}>health</p>
+                  <p className="display text-2xl" style={{ color: "var(--fern-shade)" }}>{r.good_days}</p>
+                  <p className="text-[10px] uppercase tracking-wider" style={{ color: "var(--ink-soft)" }}>good days</p>
                 </div>
               </motion.li>
             );
