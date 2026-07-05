@@ -162,17 +162,34 @@ function LogPage() {
                   <div className="mt-4 flex items-center gap-4">
                     <label className="flex-1">
                       <span className="text-xs font-bold uppercase tracking-wider" style={{ color: "var(--ink-soft)" }}>
-                        Distance · {t.km.toFixed(1)} km
+                        Distance · {t.km.toFixed(1)} km {t.km > 80 && <span style={{ color: "var(--fern-shade)" }}>(slider maxed)</span>}
                       </span>
                       <input
                         type="range"
                         min={0}
                         max={80}
                         step={0.5}
-                        value={t.km}
+                        value={Math.min(t.km, 80)}
                         onChange={(e) => setTrip(i, { km: Number(e.target.value) })}
                         className="mt-2 w-full accent-[color:var(--fern)]"
                       />
+                      <div className="mt-2 flex items-center gap-2">
+                        <span className="text-[11px] uppercase tracking-wider" style={{ color: "var(--ink-soft)" }}>Or type exact</span>
+                        <input
+                          type="number"
+                          min={0}
+                          max={20000}
+                          step={0.1}
+                          value={t.km}
+                          onChange={(e) => {
+                            const v = Number(e.target.value);
+                            if (!Number.isNaN(v) && v >= 0) setTrip(i, { km: Math.min(v, 20000) });
+                          }}
+                          className="w-28 rounded-xl border px-3 py-1.5 text-sm outline-none"
+                          style={{ background: "var(--paper)", borderColor: "var(--border)", color: "var(--ink)" }}
+                        />
+                        <span className="text-[11px]" style={{ color: "var(--ink-soft)" }}>km</span>
+                      </div>
                     </label>
                     <div className="text-right">
                       <p className="text-[11px] uppercase tracking-wider" style={{ color: "var(--ink-soft)" }}>Est. CO₂</p>
