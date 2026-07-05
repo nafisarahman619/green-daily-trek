@@ -73,8 +73,11 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
   // Pond geometry (percent, in scene coordinates). Flowers/grass must avoid this rect.
   const POND = { left: 58, right: 92, bottomMin: 4, bottomMax: 14 };
 
+  // On mobile, trees render larger relative to the pond, so widen the exclusion buffer.
+  const pondBuf = isMobile ? 6 : 2;
   const inPond = (x: number, base: number) =>
-    x >= POND.left - 2 && x <= POND.right + 2 && base >= POND.bottomMin - 1 && base <= POND.bottomMax + 2;
+    x >= POND.left - pondBuf && x <= POND.right + pondBuf && base >= POND.bottomMin - 1 && base <= POND.bottomMax + pondBuf;
+
 
   // Deterministic dense forest — up to ~50 trees, back rows smaller (depth).
   // Each tree gets its own x, base (from ground), scale, and stage bias.
