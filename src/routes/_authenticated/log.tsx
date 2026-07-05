@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { MODES, TransportMode, calcCO2Kg } from "@/lib/transport";
@@ -27,6 +27,35 @@ function LogPage() {
   const [trips, setTrips] = useState<Trip[]>([{ mode: "walk", km: 2 }]);
   const [busy, setBusy] = useState(false);
   const [celebrate, setCelebrate] = useState<null | "good" | "storm" | "neutral">(null);
+
+  // Load any trips already saved for the selected date so a second logging
+  // session on the same day APPENDS rather than replaces.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) return;
+      const { data } = await supabase
+        .from("transport_logs")
+        .select("mode,distance_km")
+        .eq("user_id", user.user.id)
+        .eq("log_date", date);
+      if (cancelled) return;
+      if (data && data.length > 0) {
+        setTrips(
+          data.map((r: any) => ({
+            mode: r.mode as TransportMode,
+            km: Number(r.distance_km),
+          })),
+        );
+      } else {
+        setTrips([{ mode: "walk", km: 2 }]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [date]);
 
   const totalCO2 = trips.reduce((s, t) => s + co2ForTrip(t.mode, t.km), 0);
 
