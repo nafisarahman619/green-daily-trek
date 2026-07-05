@@ -504,55 +504,72 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
             transition={{ opacity: { duration: 0.8 }, y: { duration: 4, repeat: Infinity, ease: "easeInOut" } }}
           >
             <div style={{ position: "relative" }}>
-              {/* Branch under owl */}
+              {/* Branch under owl — wider, textured perch that clearly reads */}
               <div
                 aria-hidden
                 style={{
                   position: "absolute",
                   left: "50%",
-                  bottom: -3,
-                  width: 46,
-                  height: 4,
-                  transform: "translateX(-50%) rotate(-4deg)",
-                  background: "linear-gradient(180deg, oklch(0.32 0.05 45), oklch(0.22 0.04 40))",
+                  bottom: -6,
+                  width: 92,
+                  height: 8,
+                  transform: "translateX(-50%) rotate(-3deg)",
+                  background: "linear-gradient(180deg, oklch(0.42 0.06 45), oklch(0.24 0.05 40))",
+                  borderRadius: 4,
+                  boxShadow: "0 2px 0 oklch(0.14 0.03 40 / 0.55), inset 0 1px 0 oklch(0.6 0.05 50 / 0.4)",
+                }}
+              />
+              {/* Small twig off the branch for detail */}
+              <div
+                aria-hidden
+                style={{
+                  position: "absolute",
+                  left: "78%",
+                  bottom: -2,
+                  width: 18,
+                  height: 3,
+                  transform: "rotate(-25deg)",
+                  background: "linear-gradient(180deg, oklch(0.38 0.06 45), oklch(0.24 0.05 40))",
                   borderRadius: 2,
-                  boxShadow: "0 1px 0 oklch(0.14 0.03 40 / 0.6)",
                 }}
               />
               <Creature id="owl" />
-              {/* Leaves tucked in front, partially overlapping the owl */}
+              {/* Soft leaves — lighter, blurred, gently nestling the owl (not blobby) */}
               <svg
                 aria-hidden
                 viewBox="0 0 60 40"
                 style={{
                   position: "absolute",
-                  left: -14,
-                  top: -6,
-                  width: 42,
-                  height: 30,
-                  pointerEvents: "none",
-                }}
-              >
-                <ellipse cx="14" cy="18" rx="12" ry="9" fill="oklch(0.32 0.09 145)" opacity="0.95" />
-                <ellipse cx="24" cy="10" rx="10" ry="7" fill="oklch(0.36 0.1 150)" opacity="0.9" />
-                <ellipse cx="8" cy="26" rx="8" ry="6" fill="oklch(0.28 0.08 145)" opacity="0.9" />
-              </svg>
-              <svg
-                aria-hidden
-                viewBox="0 0 60 40"
-                style={{
-                  position: "absolute",
-                  right: -12,
-                  top: 4,
-                  width: 36,
+                  left: -18,
+                  top: -4,
+                  width: 38,
                   height: 26,
                   pointerEvents: "none",
+                  filter: "blur(0.6px)",
+                  opacity: 0.55,
                 }}
               >
-                <ellipse cx="42" cy="18" rx="12" ry="8" fill="oklch(0.3 0.09 148)" opacity="0.92" />
-                <ellipse cx="50" cy="26" rx="8" ry="6" fill="oklch(0.26 0.08 145)" opacity="0.9" />
+                <ellipse cx="16" cy="20" rx="11" ry="7" fill="oklch(0.55 0.13 145)" />
+                <ellipse cx="24" cy="12" rx="8" ry="5" fill="oklch(0.6 0.13 150)" />
+              </svg>
+              <svg
+                aria-hidden
+                viewBox="0 0 60 40"
+                style={{
+                  position: "absolute",
+                  right: -14,
+                  top: 6,
+                  width: 32,
+                  height: 22,
+                  pointerEvents: "none",
+                  filter: "blur(0.6px)",
+                  opacity: 0.5,
+                }}
+              >
+                <ellipse cx="40" cy="18" rx="11" ry="6" fill="oklch(0.55 0.13 148)" />
               </svg>
             </div>
+
           </motion.div>
         )}
 
