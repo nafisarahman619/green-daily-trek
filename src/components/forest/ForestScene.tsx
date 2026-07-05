@@ -527,33 +527,6 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
           </motion.div>
         )}
 
-        {tod === "night" && unlockedSpecies.includes("nightVisitor") && (
-          <>
-            <motion.div
-              key="night-fox"
-              className="absolute"
-              style={{ left: "62%", bottom: "8%", zIndex: 195, filter: "brightness(0.55) saturate(0.7)" }}
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-            >
-              <div style={{ position: "relative" }}>
-                <div aria-hidden style={{ position: "absolute", left: "50%", bottom: -4, width: 56, height: 10, transform: "translateX(-50%)", background: "radial-gradient(ellipse at center, oklch(0.15 0.04 60 / 0.32), transparent 70%)", filter: "blur(2px)" }} />
-                <Creature id="fox" />
-              </div>
-            </motion.div>
-            {[0, 1, 2, 3].map((i) => (
-              <motion.div
-                key={`nf-${i}`}
-                className="absolute"
-                style={{ left: `${55 + i * 7}%`, bottom: `${18 + (i % 2) * 8}%`, zIndex: 201 }}
-                animate={{ x: [0, 10, -6, 4, 0], y: [0, -8, -3, -12, 0], opacity: [0.3, 1, 0.5, 1, 0.3] }}
-                transition={{ duration: 5 + i * 0.7, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
-              >
-                <Creature id="firefly" />
-              </motion.div>
-            ))}
-          </>
-        )}
       </AnimatePresence>
 
 
