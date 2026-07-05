@@ -197,7 +197,7 @@ export function Cloud({ scale = 1, opacity = 0.85 }: { scale?: number; opacity?:
 
 export function Pond() {
   return (
-    <svg viewBox="0 0 220 60" style={{ width: "100%", height: 60 }}>
+    <svg viewBox="0 0 220 60" style={{ width: "100%", height: 60, overflow: "visible" }}>
       <defs>
         <linearGradient id="pondG" x1="0" x2="0" y1="0" y2="1">
           <stop offset="0%" stopColor="var(--sky-deep)" />
@@ -205,11 +205,30 @@ export function Pond() {
         </linearGradient>
       </defs>
       <ellipse cx="110" cy="34" rx="105" ry="22" fill="url(#pondG)" />
+      {/* Shimmer bands */}
       <ellipse cx="70" cy="30" rx="30" ry="4" fill="white" opacity="0.35" className="shimmer-water" />
       <ellipse cx="140" cy="38" rx="24" ry="3" fill="white" opacity="0.25" className="shimmer-water" style={{ animationDelay: "1.5s" }} />
+      {/* Concentric ripples */}
+      <g fill="none" stroke="white" strokeWidth="0.6">
+        <ellipse cx="60" cy="36" rx="6" ry="1.8" opacity="0.55" className="ripple-a" />
+        <ellipse cx="60" cy="36" rx="11" ry="3.2" opacity="0.35" className="ripple-a" style={{ animationDelay: "0.8s" }} />
+        <ellipse cx="150" cy="32" rx="5" ry="1.6" opacity="0.5" className="ripple-b" />
+        <ellipse cx="150" cy="32" rx="10" ry="3" opacity="0.28" className="ripple-b" style={{ animationDelay: "1.2s" }} />
+        <ellipse cx="105" cy="42" rx="4" ry="1.3" opacity="0.5" className="ripple-a" style={{ animationDelay: "2.2s" }} />
+      </g>
+      {/* Lily pads */}
+      <g>
+        <ellipse cx="88" cy="38" rx="9" ry="4" fill="oklch(0.5 0.14 145)" />
+        <path d="M88 38 L96 36" stroke="oklch(0.32 0.08 145)" strokeWidth="0.6" opacity="0.7" />
+        <circle cx="86" cy="36" r="1.6" fill="oklch(0.92 0.1 0)" opacity="0.85" />
+        <ellipse cx="128" cy="34" rx="8" ry="3.5" fill="oklch(0.55 0.14 145)" />
+        <path d="M128 34 L120 32" stroke="oklch(0.32 0.08 145)" strokeWidth="0.6" opacity="0.7" />
+        <ellipse cx="160" cy="40" rx="7" ry="3" fill="oklch(0.48 0.13 145)" />
+      </g>
     </svg>
   );
 }
+
 
 export function GrassTuft({ delay = 0 }: { delay?: number }) {
   return (
