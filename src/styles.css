@@ -410,7 +410,21 @@
   50% { transform: rotate(30deg); }
 }
 
-/* Use the browser's native scrollbar — no custom track/thumb. */
+/* Hide scrollbars visually across browsers while preserving scroll behavior. */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/legacy Edge */
+}
+*::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
 
 /* =========================================================
    FOREST HEALTH THEME TIERS
