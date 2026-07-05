@@ -391,7 +391,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
                 left: `${g.x}%`,
                 bottom: `${(g.base / GROUND_TOP) * 100}%`,
                 zIndex: 30 + Math.floor(g.base),
-                transform: `translateX(-50%) scale(${g.scale})`,
+                transform: `translateX(-50%) scale(${g.scale * (isMobile ? 0.65 : 1)})`,
                 transformOrigin: "bottom center",
                 color: shades[g.shade],
               }}
