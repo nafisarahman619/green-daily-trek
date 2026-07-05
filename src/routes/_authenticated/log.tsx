@@ -28,6 +28,35 @@ function LogPage() {
   const [busy, setBusy] = useState(false);
   const [celebrate, setCelebrate] = useState<null | "good" | "storm" | "neutral">(null);
 
+  // Load any trips already saved for the selected date so a second logging
+  // session on the same day APPENDS rather than replaces.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) return;
+      const { data } = await supabase
+        .from("transport_logs")
+        .select("mode,distance_km")
+        .eq("user_id", user.user.id)
+        .eq("log_date", date);
+      if (cancelled) return;
+      if (data && data.length > 0) {
+        setTrips(
+          data.map((r: any) => ({
+            mode: r.mode as TransportMode,
+            km: Number(r.distance_km),
+          })),
+        );
+      } else {
+        setTrips([{ mode: "walk", km: 2 }]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [date]);
+
   const totalCO2 = trips.reduce((s, t) => s + co2ForTrip(t.mode, t.km), 0);
 
   const setTrip = (i: number, patch: Partial<Trip>) =>
