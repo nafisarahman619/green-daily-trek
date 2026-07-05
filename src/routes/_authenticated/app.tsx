@@ -77,6 +77,11 @@ function AppHome() {
         <Metric label="Trees standing" value={String(health.treeCount)} tone="fern" hint={health.isStorm ? "Storm rolling through" : "Fair skies"} icon={<TreePine className="h-4 w-4" />} />
       </div>
 
+      {/* Trees to plant */}
+      <div className="mt-3">
+        <TreesToPlantCard userId={data.userId} logs={data.logs} />
+      </div>
+
       {/* Wildlife journal */}
       <section className="mt-8 grid gap-4 md:grid-cols-2">
         <div className="surface-card p-6">
