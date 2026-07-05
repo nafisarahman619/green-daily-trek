@@ -36,7 +36,7 @@ function LeaderboardPage() {
     queryKey: ["leaderboard"],
     queryFn: async (): Promise<Row[]> => {
       const [profRes, logRes] = await Promise.all([
-        supabase.from("profiles").select("id, display_name, avatar_emoji").limit(200),
+        supabase.from("profiles").select("id, display_name, avatar_emoji, avatar_url").limit(200),
         supabase.from("transport_logs").select("user_id, co2_kg, log_date").limit(5000),
       ]);
       const profiles = profRes.data ?? [];
@@ -55,8 +55,9 @@ function LeaderboardPage() {
         inner.set(l.log_date, (inner.get(l.log_date) ?? 0) + Number(l.co2_kg));
         dayTotals.set(l.user_id, inner);
       }
+      const signed = await signAvatarUrls(profiles.map((p: any) => p.avatar_url));
       return profiles
-        .map((p: any) => {
+        .map((p: any): Row => {
           const inner = dayTotals.get(p.id) ?? new Map();
           const daysArr = [...inner.entries()];
           const good = daysArr.filter(([, v]) => (v as number) <= DAILY_BASELINE_KG).length;
@@ -67,6 +68,8 @@ function LeaderboardPage() {
             user_id: p.id,
             display_name: p.display_name ?? "Forest friend",
             avatar_emoji: p.avatar_emoji ?? "🌱",
+            avatar_url: p.avatar_url ?? null,
+            avatar_signed: p.avatar_url ? signed.get(p.avatar_url) ?? null : null,
             total_co2: total,
             good_days: good,
             score,
