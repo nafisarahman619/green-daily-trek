@@ -498,7 +498,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
           <motion.div
             key="owl"
             className="absolute"
-            style={{ left: "24%", bottom: "26%", zIndex: 55 }}
+            style={{ left: "24%", bottom: "26%", zIndex: 150 }}
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: [0, -1.5, 0] }}
             transition={{ opacity: { duration: 0.8 }, y: { duration: 4, repeat: Infinity, ease: "easeInOut" } }}
