@@ -1,27 +1,16 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
-import { Leaf, Trophy, PenLine, BarChart3, LogOut } from "lucide-react";
+import { Leaf, Trophy, PenLine, BarChart3, User } from "lucide-react";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const loc = useLocation();
-  const navigate = useNavigate();
-  const qc = useQueryClient();
 
   const nav = [
     { to: "/app", label: "Forest", icon: Leaf },
     { to: "/log", label: "Log day", icon: PenLine },
     { to: "/leaderboard", label: "Leaderboard", icon: Trophy },
     { to: "/history", label: "History", icon: BarChart3 },
+    { to: "/profile", label: "Profile", icon: User },
   ];
-
-  const handleSignOut = async () => {
-    await qc.cancelQueries();
-    qc.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
-  };
 
   return (
     <div className="min-h-screen" style={{ background: "var(--canvas)" }}>
@@ -58,10 +47,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               );
             })}
           </nav>
-          <button onClick={handleSignOut} className="btn-ghost-delft" style={{ padding: "0.5rem 0.9rem", fontSize: "0.85rem" }}>
-            <LogOut className="h-4 w-4" />
-            <span className="hidden sm:inline">Sign out</span>
-          </button>
+          <Link to="/profile" className="btn-ghost-delft" style={{ padding: "0.5rem 0.9rem", fontSize: "0.85rem" }}>
+            <User className="h-4 w-4" />
+            <span className="hidden sm:inline">Profile</span>
+          </Link>
         </div>
         {/* Mobile bottom nav */}
         <nav className="md:hidden">

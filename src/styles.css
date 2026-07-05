@@ -107,6 +107,34 @@
   --sidebar-ring: var(--fern);
 }
 
+/* Dark theme — activated by adding `.dark` on <html>. Only overrides
+   the semantic tokens; component styles inherit through the same vars. */
+.dark {
+  --ink: oklch(0.94 0.02 250);
+  --ink-soft: oklch(0.78 0.03 250);
+  --canvas: oklch(0.18 0.03 260);
+  --canvas-warm: oklch(0.22 0.035 260);
+  --canvas-deep: oklch(0.26 0.04 260);
+  --paper: oklch(0.24 0.035 260);
+  --delft: oklch(0.78 0.09 245);
+  --delft-soft: oklch(0.68 0.08 245);
+  --delft-deep: oklch(0.92 0.05 245);
+  --border: oklch(0.36 0.03 260);
+  --input: oklch(0.32 0.03 260);
+  --background: var(--canvas);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --secondary: var(--canvas-warm);
+  --secondary-foreground: var(--delft-deep);
+  --muted: var(--canvas-warm);
+  --muted-foreground: var(--ink-soft);
+  --shadow-card: 0 10px 30px -12px oklch(0 0 0 / 0.45);
+  --shadow-soft: 0 4px 14px -6px oklch(0 0 0 / 0.4);
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 6px);
   --radius-md: calc(var(--radius) - 4px);
