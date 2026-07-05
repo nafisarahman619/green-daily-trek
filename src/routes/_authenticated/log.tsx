@@ -27,15 +27,38 @@ function LogPage() {
   const [trips, setTrips] = useState<Trip[]>([{ mode: "walk", km: 2 }]);
   const [busy, setBusy] = useState(false);
   const [celebrate, setCelebrate] = useState<null | "good" | "storm" | "neutral">(null);
+  // CO2 already saved to the DB for the selected date (all prior submissions).
+  const [savedDayCO2, setSavedDayCO2] = useState(0);
 
-  // Always start a fresh entry form. Any existing trips for this date remain
-  // in the database — new submissions APPEND to them so the day's total is
-  // the sum of all trips logged that day.
+  // Load the day's already-saved CO2 total so Day Total reflects EVERY trip
+  // logged that calendar day, not just the current form batch.
+  const loadSavedDayCO2 = async (d: string) => {
+    const { data: user } = await supabase.auth.getUser();
+    if (!user.user) return 0;
+    const { data } = await supabase
+      .from("transport_logs")
+      .select("co2_kg")
+      .eq("user_id", user.user.id)
+      .eq("log_date", d);
+    const total = (data ?? []).reduce((s, r: any) => s + Number(r.co2_kg), 0);
+    return total;
+  };
+
+  // Always start with a fresh empty entry. Existing rows for the date remain
+  // in the DB — the form APPENDS more trips to them.
   useEffect(() => {
+    let cancelled = false;
     setTrips([{ mode: "walk", km: 2 }]);
+    loadSavedDayCO2(date).then((t) => {
+      if (!cancelled) setSavedDayCO2(t);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [date]);
 
-  const totalCO2 = trips.reduce((s, t) => s + co2ForTrip(t.mode, t.km), 0);
+  const formCO2 = trips.reduce((s, t) => s + co2ForTrip(t.mode, t.km), 0);
+  const totalCO2 = savedDayCO2 + formCO2;
 
   const setTrip = (i: number, patch: Partial<Trip>) =>
     setTrips((prev) => prev.map((t, idx) => (idx === i ? { ...t, ...patch } : t)));
