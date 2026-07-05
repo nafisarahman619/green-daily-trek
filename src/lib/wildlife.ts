@@ -35,9 +35,10 @@ export const SPECIES: Species[] = [
     id: "firefly",
     name: "Firefly Cloud",
     emoji: "✨",
-    requirement: "10 low-emission days total",
-    test: (c) => c.goodDays >= 10,
+    requirement: "Appears every night automatically",
+    test: () => true,
   },
+
   {
     id: "deer",
     name: "Forest Deer",
