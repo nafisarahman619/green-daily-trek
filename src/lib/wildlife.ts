@@ -6,7 +6,7 @@ export interface Species {
   name: string;
   emoji: string;
   requirement: string;
-  test: (ctx: { totalLogs: number; goodDays: number; streak: number; nightLogs: number }) => boolean;
+  test: (ctx: { totalLogs: number; goodDays: number; streak: number; nightLogs: number; nightDays: number }) => boolean;
 }
 
 export const SPECIES: Species[] = [
