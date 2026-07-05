@@ -10,11 +10,12 @@ import type { ForestHealth } from "@/lib/transport";
  */
 
 interface TreeProps {
-  stage: "seedling" | "sapling" | "young" | "mature";
+  stage: "seedling" | "sapling" | "young" | "mature" | "stump";
   wilted?: boolean;
   delay?: number;
   scale?: number;
 }
+
 
 const GREEN = {
   bright: "var(--fern-glow)",
@@ -49,6 +50,19 @@ export function Tree({ stage, wilted, delay = 0, scale = 1 }: TreeProps) {
       transition={{ delay, type: "spring", stiffness: 180, damping: 14 }}
     >
       <g className={swayClass}>
+        {stage === "stump" && (
+          <>
+            {/* Short broken trunk — no canopy. Same trunk palette as mature. */}
+            <ellipse cx="60" cy="158" rx="18" ry="3.5" fill="oklch(0.15 0.04 60 / 0.35)" />
+            <path d="M60 160 Q59 150 58 140" stroke={TRUNK} strokeWidth="12" strokeLinecap="round" fill="none" />
+            {/* Top cross-section (rings) */}
+            <ellipse cx="58" cy="140" rx="7" ry="2.4" fill={TRUNK_DARK} />
+            <ellipse cx="58" cy="140" rx="4.5" ry="1.5" fill="oklch(0.48 0.06 55)" />
+            <ellipse cx="58" cy="140" rx="2.2" ry="0.8" fill={TRUNK_DARK} opacity="0.7" />
+            {/* Splintered edge */}
+            <path d="M50 141 L54 138 L57 141 L60 137 L63 141 L66 138 L68 141" stroke={TRUNK_DARK} strokeWidth="1" fill="none" strokeLinecap="round" />
+          </>
+        )}
         {stage === "seedling" && (
           <>
             {/* two tiny leaves + stem */}
@@ -58,6 +72,7 @@ export function Tree({ stage, wilted, delay = 0, scale = 1 }: TreeProps) {
             <ellipse cx="52" cy="128" rx="6" ry="3" fill={c.deep} transform="rotate(-25 52 128)" opacity="0.35" />
           </>
         )}
+
         {stage === "sapling" && (
           <>
             <path d="M60 155 Q59 130 58 100" stroke={TRUNK} strokeWidth="5" strokeLinecap="round" fill="none" />
