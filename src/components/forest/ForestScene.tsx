@@ -422,7 +422,9 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
                 y: { duration: b.dur, repeat: Infinity, ease: "easeInOut" },
               }}
             >
-              <Creature id="butterfly" variant={b.variant} />
+              <div style={{ transform: `scale(${isMobile ? 0.55 : 1})`, transformOrigin: "center" }}>
+                <Creature id="butterfly" variant={b.variant} />
+              </div>
             </motion.div>
           ))}
         {unlockedSpecies.includes("bird") && (
