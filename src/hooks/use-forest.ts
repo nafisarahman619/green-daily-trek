@@ -7,12 +7,14 @@ import { useEffect, useMemo, useState } from "react";
 export interface ForestData {
   logs: { co2_kg: number; log_date: string; mode: string }[];
   totalCO2: number;
+  weeklyCO2: number;
   totalLogs: number;
   goodDays: number;
   streak: number;
   unlocks: string[];
   userId: string;
 }
+
 
 export function useForestData() {
   const [userId, setUserId] = useState<string | null>(null);
@@ -49,6 +51,15 @@ export function useForestData() {
       }
       const totalCO2 = logs.reduce((s, l) => s + Number(l.co2_kg), 0);
 
+      // Rolling 7-day CO2 sum (today + previous 6 days) for the stump/weekly-budget system.
+      const now = new Date();
+      const cutoff = new Date(now);
+      cutoff.setDate(now.getDate() - 6);
+      const cutoffStr = cutoff.toISOString().slice(0, 10);
+      const weeklyCO2 = logs
+        .filter((l) => l.log_date >= cutoffStr)
+        .reduce((s, l) => s + Number(l.co2_kg), 0);
+
       // Sync unlocks
       const shouldUnlock = evaluateUnlocks({ totalLogs: dates.length, goodDays, streak });
       const newlyUnlocked = shouldUnlock.filter((s) => !unlocked.has(s));
@@ -62,6 +73,8 @@ export function useForestData() {
       return {
         logs,
         totalCO2,
+        weeklyCO2,
+
         totalLogs: dates.length,
         goodDays,
         streak,
