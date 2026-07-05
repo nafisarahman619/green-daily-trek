@@ -90,6 +90,10 @@ function LogPage() {
       const { error } = await supabase.from("transport_logs").insert(rows);
       if (error) throw error;
 
+      // Invalidate forest cache so Forest Health recalculates from fresh
+      // today's-total CO2 (including zero-emission trips like walking).
+      await queryClient.invalidateQueries({ queryKey: ["forest"] });
+
       const tone = totalCO2 <= 2 ? "good" : totalCO2 >= 6 ? "storm" : "neutral";
       setCelebrate(tone);
       setTimeout(() => navigate({ to: "/app" }), 2200);
