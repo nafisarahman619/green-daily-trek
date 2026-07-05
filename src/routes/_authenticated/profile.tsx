@@ -174,13 +174,13 @@ function ProfilePage() {
           <p className="mt-1 text-sm" style={{ color: "var(--ink-soft)" }}>
             Earned from your streaks, low-emission days, and milestones.
           </p>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {SPECIES.map((s) => {
               const unlocked = data.unlocks.includes(s.id);
               return (
                 <div
                   key={s.id}
-                  className="flex items-center gap-3 rounded-2xl border p-3"
+                  className="flex min-w-0 items-center gap-3 rounded-2xl border p-3"
                   style={{
                     background: unlocked
                       ? "color-mix(in oklab, var(--pistachio) 28%, var(--paper))"
@@ -191,7 +191,7 @@ function ProfilePage() {
                   }}
                 >
                   <div
-                    className="grid h-11 w-11 place-items-center rounded-xl text-xl"
+                    className="grid h-11 w-11 shrink-0 place-items-center rounded-xl text-xl"
                     style={{ background: "var(--canvas-warm)" }}
                   >
                     {s.emoji}
