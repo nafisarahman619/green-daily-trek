@@ -30,9 +30,6 @@ type Row = {
   good_days: number;
   score: number;
 };
-  good_days: number;
-  score: number;
-};
 
 function LeaderboardPage() {
   const { data, isLoading } = useQuery({
