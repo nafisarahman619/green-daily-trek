@@ -29,6 +29,8 @@ const WILT = {
 const TRUNK = "oklch(0.35 0.05 50)";
 const TRUNK_DARK = "oklch(0.25 0.04 45)";
 
+const OUTLINE = "oklch(0.22 0.06 150)";
+
 export function Tree({ stage, wilted, delay = 0, scale = 1 }: TreeProps) {
   const c = wilted ? WILT : GREEN;
   const swayClass = stage === "seedling" ? "sway-fast" : "sway-slow";
@@ -44,52 +46,97 @@ export function Tree({ stage, wilted, delay = 0, scale = 1 }: TreeProps) {
       <g className={swayClass}>
         {stage === "seedling" && (
           <>
-            {/* two tiny leaves + stem */}
-            <path d="M60 155 Q60 140 60 128" stroke={c.deep} strokeWidth="3" fill="none" strokeLinecap="round" />
-            <ellipse cx="52" cy="128" rx="10" ry="6" fill={c.mid} transform="rotate(-25 52 128)" />
-            <ellipse cx="68" cy="128" rx="10" ry="6" fill={c.bright} transform="rotate(25 68 128)" />
-            <ellipse cx="52" cy="128" rx="6" ry="3" fill={c.deep} transform="rotate(-25 52 128)" opacity="0.35" />
+            <path d="M60 155 Q60 140 60 128" stroke={TRUNK_DARK} strokeWidth="3.5" fill="none" strokeLinecap="round" />
+            <ellipse cx="52" cy="128" rx="10" ry="6" fill={c.mid} stroke={OUTLINE} strokeWidth="1.2" transform="rotate(-25 52 128)" />
+            <ellipse cx="68" cy="128" rx="10" ry="6" fill={c.bright} stroke={OUTLINE} strokeWidth="1.2" transform="rotate(25 68 128)" />
+            <path d="M48 126 Q52 122 56 126" stroke={c.deep} strokeWidth="1" fill="none" transform="rotate(-25 52 128)" />
           </>
         )}
+
         {stage === "sapling" && (
           <>
-            <path d="M60 155 Q59 130 58 100" stroke={TRUNK} strokeWidth="5" strokeLinecap="round" fill="none" />
-            {/* organic leaf-cluster canopy */}
-            <path d="M60 74 Q40 70 38 88 Q30 94 42 102 Q46 112 60 108 Q76 112 80 100 Q92 94 82 84 Q82 68 60 74 Z" fill={c.mid} />
-            <path d="M50 78 Q40 80 42 92 Q50 96 58 90 Q60 82 50 78 Z" fill={c.bright} />
-            <path d="M70 84 Q80 84 78 96 Q68 100 66 92 Q66 84 70 84 Z" fill={c.deep} />
-            <ellipse cx="60" cy="104" rx="20" ry="6" fill={c.shade} opacity="0.35" />
+            {/* Trunk with taper + bark hint */}
+            <path d="M56 158 Q57 130 58 100 L62 100 Q63 130 64 158 Z" fill={TRUNK} stroke={OUTLINE} strokeWidth="1.2" />
+            <path d="M59 148 Q60 140 60 132" stroke={TRUNK_DARK} strokeWidth="0.8" fill="none" opacity="0.7" />
+            {/* Base canopy silhouette (outline) */}
+            <path d="M60 68 Q36 68 32 88 Q24 96 38 106 Q42 116 60 112 Q78 116 82 104 Q96 96 88 84 Q86 66 60 68 Z"
+              fill={c.deep} stroke={OUTLINE} strokeWidth="1.8" strokeLinejoin="round" />
+            {/* Mid-tone cluster lobes */}
+            <circle cx="48" cy="86" r="14" fill={c.mid} stroke={OUTLINE} strokeWidth="1.2" />
+            <circle cx="72" cy="90" r="15" fill={c.mid} stroke={OUTLINE} strokeWidth="1.2" />
+            <circle cx="60" cy="78" r="14" fill={c.mid} stroke={OUTLINE} strokeWidth="1.2" />
+            {/* Highlights */}
+            <ellipse cx="52" cy="82" rx="7" ry="5" fill={c.bright} opacity="0.9" />
+            <ellipse cx="68" cy="86" rx="5" ry="4" fill={c.bright} opacity="0.75" />
+            <ellipse cx="60" cy="112" rx="22" ry="4" fill={c.shade} opacity="0.35" />
           </>
         )}
+
         {stage === "young" && (
           <>
-            <path d="M60 158 Q59 125 58 92" stroke={TRUNK} strokeWidth="7" strokeLinecap="round" fill="none" />
-            <path d="M58 128 Q50 122 44 116" stroke={TRUNK_DARK} strokeWidth="3.5" strokeLinecap="round" fill="none" />
-            {/* organic layered canopy blob */}
-            <path d="M60 46 Q34 46 24 66 Q14 78 26 92 Q22 108 44 108 Q52 118 66 112 Q84 116 92 100 Q104 92 96 76 Q100 58 82 54 Q76 40 60 46 Z" fill={c.deep} />
-            <path d="M62 52 Q42 52 34 68 Q26 80 38 90 Q40 102 58 100 Q76 104 82 92 Q92 82 84 70 Q82 56 62 52 Z" fill={c.mid} />
-            <path d="M52 58 Q40 60 38 74 Q42 84 54 82 Q64 80 62 68 Q60 58 52 58 Z" fill={c.bright} />
-            <path d="M74 66 Q84 68 84 82 Q78 90 70 84 Q66 74 74 66 Z" fill={c.bright} opacity="0.85" />
-            <ellipse cx="60" cy="106" rx="30" ry="8" fill={c.shade} opacity="0.35" />
-            <circle cx="46" cy="66" r="4" fill={c.bright} opacity="0.7" />
-            <circle cx="80" cy="82" r="3" fill={c.bright} opacity="0.6" />
+            {/* Trunk — visible tapered shape with bark */}
+            <path d="M54 160 Q56 128 57 92 L63 92 Q64 128 66 160 Z" fill={TRUNK} stroke={OUTLINE} strokeWidth="1.5" />
+            <path d="M57 130 Q50 122 44 116" stroke={TRUNK_DARK} strokeWidth="3.5" strokeLinecap="round" fill="none" />
+            <path d="M60 140 L60 100" stroke={TRUNK_DARK} strokeWidth="0.9" fill="none" opacity="0.55" />
+            <path d="M56 118 L64 118" stroke={TRUNK_DARK} strokeWidth="0.8" fill="none" opacity="0.4" />
+
+            {/* Canopy silhouette — outlined dark base */}
+            <path d="M60 40 Q30 42 20 64 Q10 78 24 92 Q18 108 42 110 Q52 122 66 114 Q86 118 94 100 Q108 92 98 74 Q102 56 82 50 Q78 34 60 40 Z"
+              fill={c.deep} stroke={OUTLINE} strokeWidth="2" strokeLinejoin="round" />
+
+            {/* Mid-green cluster lobes for depth */}
+            <circle cx="40" cy="74" r="18" fill={c.mid} stroke={OUTLINE} strokeWidth="1.3" />
+            <circle cx="62" cy="62" r="20" fill={c.mid} stroke={OUTLINE} strokeWidth="1.3" />
+            <circle cx="82" cy="76" r="18" fill={c.mid} stroke={OUTLINE} strokeWidth="1.3" />
+            <circle cx="50" cy="92" r="16" fill={c.mid} stroke={OUTLINE} strokeWidth="1.3" />
+            <circle cx="76" cy="94" r="15" fill={c.mid} stroke={OUTLINE} strokeWidth="1.3" />
+
+            {/* Highlight crescents */}
+            <path d="M34 66 Q40 58 50 60" stroke={c.bright} strokeWidth="4" fill="none" strokeLinecap="round" opacity="0.85" />
+            <path d="M58 52 Q66 48 74 54" stroke={c.bright} strokeWidth="4" fill="none" strokeLinecap="round" opacity="0.85" />
+            <ellipse cx="46" cy="84" rx="5" ry="3" fill={c.bright} opacity="0.7" />
+            <ellipse cx="78" cy="88" rx="4" ry="3" fill={c.bright} opacity="0.6" />
+
+            <ellipse cx="60" cy="112" rx="34" ry="7" fill={c.shade} opacity="0.4" />
           </>
         )}
+
         {stage === "mature" && (
           <>
-            <path d="M60 160 Q58 122 58 88" stroke={TRUNK} strokeWidth="10" strokeLinecap="round" fill="none" />
-            <path d="M58 128 Q46 118 38 108" stroke={TRUNK_DARK} strokeWidth="5" strokeLinecap="round" fill="none" />
-            <path d="M58 118 Q68 108 78 100" stroke={TRUNK_DARK} strokeWidth="5" strokeLinecap="round" fill="none" />
-            {/* Rich layered organic canopy */}
-            <path d="M60 24 Q28 26 16 52 Q4 68 18 84 Q10 102 34 108 Q42 122 62 116 Q86 122 96 104 Q114 96 106 76 Q116 58 96 46 Q92 26 60 24 Z" fill={c.deep} />
-            <path d="M60 30 Q34 32 24 54 Q14 68 28 82 Q24 98 46 104 Q54 114 66 110 Q84 116 92 100 Q106 92 100 76 Q106 60 88 50 Q84 30 60 30 Z" fill={c.mid} />
-            <path d="M58 38 Q40 40 32 58 Q26 72 40 82 Q44 94 60 92 Q76 96 82 82 Q92 74 84 62 Q84 46 58 38 Z" fill={c.bright} />
-            <path d="M48 50 Q38 54 40 68 Q50 76 58 68 Q62 58 48 50 Z" fill={c.bright} opacity="0.9" />
-            <path d="M74 56 Q86 58 84 76 Q74 82 68 72 Q68 58 74 56 Z" fill={c.mid} opacity="0.9" />
-            <ellipse cx="60" cy="108" rx="42" ry="10" fill={c.shade} opacity="0.4" />
-            <circle cx="42" cy="58" r="6" fill={c.bright} opacity="0.85" />
-            <circle cx="82" cy="66" r="5" fill={c.bright} opacity="0.75" />
-            <circle cx="60" cy="46" r="4" fill={c.bright} opacity="0.6" />
+            {/* Trunk — thick tapered with root flare + bark grooves */}
+            <path d="M48 160 Q52 128 54 88 L66 88 Q68 128 72 160 Z" fill={TRUNK} stroke={OUTLINE} strokeWidth="1.8" />
+            <path d="M58 128 Q46 118 36 106" stroke={TRUNK_DARK} strokeWidth="5" strokeLinecap="round" fill="none" />
+            <path d="M62 116 Q74 106 84 96" stroke={TRUNK_DARK} strokeWidth="5" strokeLinecap="round" fill="none" />
+            <path d="M60 148 L60 96" stroke={TRUNK_DARK} strokeWidth="1.1" fill="none" opacity="0.55" />
+            <path d="M54 138 L66 138 M55 118 L65 118 M56 104 L64 104" stroke={TRUNK_DARK} strokeWidth="0.9" fill="none" opacity="0.45" />
+
+            {/* Canopy silhouette — dark outlined base, generous scalloped edge */}
+            <path d="M60 18 Q26 22 14 50 Q0 66 16 84 Q6 104 32 110 Q40 124 62 118 Q88 124 100 106 Q120 96 110 74 Q122 54 100 44 Q94 20 60 18 Z"
+              fill={c.deep} stroke={OUTLINE} strokeWidth="2.2" strokeLinejoin="round" />
+
+            {/* Multiple mid-green foliage clusters — each with its own outline for definition */}
+            <circle cx="32" cy="58" r="22" fill={c.mid} stroke={OUTLINE} strokeWidth="1.5" />
+            <circle cx="58" cy="42" r="24" fill={c.mid} stroke={OUTLINE} strokeWidth="1.5" />
+            <circle cx="86" cy="56" r="22" fill={c.mid} stroke={OUTLINE} strokeWidth="1.5" />
+            <circle cx="42" cy="86" r="20" fill={c.mid} stroke={OUTLINE} strokeWidth="1.5" />
+            <circle cx="72" cy="90" r="21" fill={c.mid} stroke={OUTLINE} strokeWidth="1.5" />
+            <circle cx="60" cy="70" r="18" fill={c.mid} stroke={OUTLINE} strokeWidth="1.5" />
+
+            {/* Bright highlight lobes — sunlit tops */}
+            <path d="M22 50 Q30 38 44 42" stroke={c.bright} strokeWidth="5" fill="none" strokeLinecap="round" opacity="0.9" />
+            <path d="M50 32 Q60 26 72 32" stroke={c.bright} strokeWidth="5" fill="none" strokeLinecap="round" opacity="0.9" />
+            <path d="M78 48 Q88 42 96 52" stroke={c.bright} strokeWidth="5" fill="none" strokeLinecap="round" opacity="0.9" />
+            <ellipse cx="38" cy="80" rx="6" ry="4" fill={c.bright} opacity="0.7" />
+            <ellipse cx="74" cy="82" rx="6" ry="4" fill={c.bright} opacity="0.7" />
+
+            {/* Leaf-fleck accents */}
+            <circle cx="24" cy="72" r="2.2" fill={c.bright} opacity="0.7" />
+            <circle cx="98" cy="72" r="2.2" fill={c.bright} opacity="0.7" />
+            <circle cx="60" cy="24" r="2" fill={c.bright} opacity="0.6" />
+            <circle cx="46" cy="102" r="2" fill={c.bright} opacity="0.6" />
+            <circle cx="80" cy="104" r="2" fill={c.bright} opacity="0.6" />
+
+            <ellipse cx="60" cy="118" rx="46" ry="10" fill={c.shade} opacity="0.4" />
           </>
         )}
       </g>
@@ -100,25 +147,34 @@ export function Tree({ stage, wilted, delay = 0, scale = 1 }: TreeProps) {
 /* ---------------- Flowers, grass, pond, clouds, wildlife ---------------- */
 
 export function Wildflower({ variant, delay = 0 }: { variant: 1 | 2 | 3; delay?: number }) {
-  const petal =
-    variant === 1 ? "oklch(0.85 0.15 30)" :
-    variant === 2 ? "oklch(0.88 0.12 320)" :
-                    "oklch(0.9 0.14 90)";
+  const palette =
+    variant === 1
+      ? { petal: "oklch(0.78 0.19 25)", petalDeep: "oklch(0.55 0.18 25)", center: "oklch(0.92 0.18 90)" }
+      : variant === 2
+      ? { petal: "oklch(0.82 0.16 320)", petalDeep: "oklch(0.55 0.18 320)", center: "oklch(0.95 0.15 90)" }
+      : { petal: "oklch(0.9 0.17 90)", petalDeep: "oklch(0.65 0.18 70)", center: "oklch(0.55 0.18 30)" };
   return (
     <motion.svg
       viewBox="0 0 40 60"
-      style={{ width: 22, height: 32, overflow: "visible" }}
+      style={{ width: 30, height: 44, overflow: "visible" }}
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay, type: "spring", stiffness: 200 }}
     >
-      <path d="M20 58 L20 30" stroke={GREEN.deep} strokeWidth="2" strokeLinecap="round" />
+      {/* Stem */}
+      <path d="M20 58 Q19 44 20 30" stroke={GREEN.deep} strokeWidth="2.2" strokeLinecap="round" fill="none" />
+      {/* Leaf */}
+      <path d="M20 44 Q10 42 12 36 Q18 38 20 44 Z" fill={GREEN.mid} stroke={GREEN.deep} strokeWidth="1" />
       <g className="sway-fast">
-        <circle cx="20" cy="18" r="6" fill={petal} />
-        <circle cx="12" cy="22" r="5" fill={petal} />
-        <circle cx="28" cy="22" r="5" fill={petal} />
-        <circle cx="20" cy="26" r="5" fill={petal} />
-        <circle cx="20" cy="22" r="3" fill="oklch(0.95 0.15 90)" />
+        {/* 5 outlined petals around a center */}
+        <circle cx="20" cy="14" r="7" fill={palette.petal} stroke={palette.petalDeep} strokeWidth="1.4" />
+        <circle cx="10" cy="20" r="7" fill={palette.petal} stroke={palette.petalDeep} strokeWidth="1.4" />
+        <circle cx="30" cy="20" r="7" fill={palette.petal} stroke={palette.petalDeep} strokeWidth="1.4" />
+        <circle cx="14" cy="28" r="7" fill={palette.petal} stroke={palette.petalDeep} strokeWidth="1.4" />
+        <circle cx="26" cy="28" r="7" fill={palette.petal} stroke={palette.petalDeep} strokeWidth="1.4" />
+        {/* Center */}
+        <circle cx="20" cy="22" r="4.5" fill={palette.center} stroke={palette.petalDeep} strokeWidth="1.2" />
+        <circle cx="20" cy="22" r="1.5" fill={palette.petalDeep} opacity="0.7" />
       </g>
     </motion.svg>
   );
