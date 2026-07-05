@@ -202,7 +202,7 @@ function LogPage() {
 
           <div className="mt-6 flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-xs uppercase tracking-wider" style={{ color: "var(--ink-soft)" }}>Day total</p>
+              <p className="text-xs uppercase tracking-wider" style={{ color: "var(--ink-soft)" }}>Day total {savedDayCO2 > 0 ? `(${savedDayCO2.toFixed(2)} already logged + ${formCO2.toFixed(2)} new)` : ""}</p>
               <p className="display text-3xl" style={{ color: "var(--delft-deep)" }}>{totalCO2.toFixed(2)} <span className="text-base">kg CO₂</span></p>
             </div>
             <button disabled={busy} onClick={submit} className="btn-fern">
