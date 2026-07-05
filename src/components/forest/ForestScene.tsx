@@ -478,7 +478,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
           </motion.div>
         )}
         {unlockedSpecies.includes("fox") && (
-          <motion.div key="fox" className="absolute" style={{ left: "78%", bottom: "6%", zIndex: 190 }} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }}>
+          <motion.div key="fox" className="absolute" style={{ left: "48%", bottom: "4%", zIndex: 190 }} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }}>
             <div style={{ position: "relative" }}>
               <div aria-hidden style={{ position: "absolute", left: "50%", bottom: -4, width: 56, height: 10, transform: "translateX(-50%)", background: "radial-gradient(ellipse at center, oklch(0.15 0.04 60 / 0.32), transparent 70%)", filter: "blur(2px)" }} />
               <Creature id="fox" />
