@@ -3,11 +3,14 @@ import { Leaf, Trophy, PenLine, BarChart3, User } from "lucide-react";
 import { useForestData } from "@/hooks/use-forest";
 import { tierFromScore, tierLabel } from "@/lib/forest-theme";
 import { ThemeDecorations } from "@/components/ThemeDecorations";
+import { useTheme } from "@/lib/preferences";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const loc = useLocation();
   const { health } = useForestData();
   const tier = tierFromScore(health?.score ?? 100);
+  useTheme(); // applies the stored light/dark class on every authenticated route
+
 
   const nav = [
     { to: "/app", label: "Forest", icon: Leaf },
