@@ -18,6 +18,22 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
   const tod = timeOfDay();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
+  const [containerW, setContainerW] = useState(1000);
+
+  // Track container width so we can scale down tree pixel sizes on narrow screens.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      for (const e of entries) setContainerW(e.contentRect.width);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const isMobile = containerW < 500;
+  // Scale trees down proportionally on narrow screens (keeps shape, tightens footprint).
+  const mobileTreeScale = isMobile ? Math.max(0.5, containerW / 640) : 1;
 
   // Subtle mouse parallax (background only — foreground stays anchored to ground)
   useEffect(() => {
@@ -37,6 +53,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
       el.removeEventListener("mouseleave", onLeave);
     };
   }, []);
+
 
   const skyGradient = useMemo(() => {
     switch (tod) {
