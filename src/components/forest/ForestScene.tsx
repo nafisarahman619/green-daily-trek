@@ -107,8 +107,27 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
         delay: rng() * 2,
       });
     }
+    // Pond-edge tufts — hug the perimeter so the pond doesn't sit on bare ground.
+    const pondCx = (POND.left + POND.right) / 2;
+    const pondCy = (POND.bottomMin + POND.bottomMax) / 2;
+    const rx = (POND.right - POND.left) / 2 + 1.5;
+    const ry = (POND.bottomMax - POND.bottomMin) / 2 + 1.5;
+    for (let i = 0; i < 26; i++) {
+      const ang = (i / 26) * Math.PI * 2 + rng() * 0.15;
+      const x = pondCx + Math.cos(ang) * (rx + rng() * 1.2);
+      const base = pondCy + Math.sin(ang) * (ry + rng() * 0.8);
+      if (base < 0) continue;
+      arr.push({
+        x,
+        base,
+        scale: 0.5 + rng() * 0.5,
+        shade: (Math.floor(rng() * 3) as 0 | 1 | 2),
+        delay: rng() * 2,
+      });
+    }
     return arr;
   }, []);
+
 
   // Flowers — clustered on land only, never on pond
   const flowers = useMemo(() => {
