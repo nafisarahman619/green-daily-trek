@@ -406,9 +406,24 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
       <AnimatePresence>
         {unlockedSpecies.includes("butterfly") &&
           ([
-            { left: "22%", bottom: "55%", variant: 1 as const, xPath: [0, 30, 10, 40, 0], yPath: [0, -12, 6, -8, 0], dur: 12 },
-            { left: "55%", bottom: "42%", variant: 2 as const, xPath: [0, -25, 15, -10, 0], yPath: [0, 8, -14, 4, 0], dur: 14 },
-            { left: "78%", bottom: "50%", variant: 3 as const, xPath: [0, 20, -18, 12, 0], yPath: [0, -10, 12, -6, 0], dur: 11 },
+            // Loose orbits around the pond area (pond center ~ left 75%, bottom 9%).
+            // Butterflies stay ABOVE and AROUND the pond, never drifting downward past it.
+            { left: "68%", bottom: "22%", variant: 1 as const,
+              xPath: [55, 20, -45, -10, 55],
+              yPath: [0, -18, 4, 20, 0],
+              flip:  [1, -1, -1, 1, 1],
+              dur: 13 },
+            { left: "80%", bottom: "26%", variant: 2 as const,
+              // Reversed direction (starts moving right→left)
+              xPath: [-40, -10, 50, 15, -40],
+              yPath: [0, 16, 2, -18, 0],
+              flip:  [-1, 1, 1, -1, -1],
+              dur: 15 },
+            { left: "74%", bottom: "18%", variant: 3 as const,
+              xPath: [40, 65, 10, -30, 40],
+              yPath: [0, -14, -22, -6, 0],
+              flip:  [1, 1, -1, -1, 1],
+              dur: 11 },
           ]).map((b, i) => (
             <motion.div
               key={`bfly-${i}`}
@@ -422,7 +437,14 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
                 y: { duration: b.dur, repeat: Infinity, ease: "easeInOut" },
               }}
             >
-              <Creature id="butterfly" variant={b.variant} />
+              {/* Inner wrapper flips horizontally to match direction of flight (side-view orientation) */}
+              <motion.div
+                animate={{ scaleX: b.flip }}
+                transition={{ duration: b.dur, repeat: Infinity, ease: "easeInOut", times: [0, 0.25, 0.5, 0.75, 1] }}
+                style={{ transformOrigin: "center" }}
+              >
+                <Creature id="butterfly" variant={b.variant} />
+              </motion.div>
             </motion.div>
           ))}
         {unlockedSpecies.includes("bird") && (

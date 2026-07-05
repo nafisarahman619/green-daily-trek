@@ -372,6 +372,15 @@
   0%, 100% { transform: scaleX(1); }
   50% { transform: scaleX(0.25); }
 }
+/* Side-view flap: wings tilt toward/away from viewer → vertical scale */
+@keyframes bfly-flap-side-front {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.35); }
+}
+@keyframes bfly-flap-side-back {
+  0%, 100% { transform: scaleY(0.9); }
+  50% { transform: scaleY(0.3); }
+}
 @keyframes bird-flap {
   0%, 100% { transform: rotate(-30deg); }
   50% { transform: rotate(30deg); }
