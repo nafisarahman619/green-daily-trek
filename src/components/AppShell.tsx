@@ -1,8 +1,13 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { Leaf, Trophy, PenLine, BarChart3, User } from "lucide-react";
+import { useForestData } from "@/hooks/use-forest";
+import { tierFromScore, tierLabel } from "@/lib/forest-theme";
+import { ThemeDecorations } from "@/components/ThemeDecorations";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const loc = useLocation();
+  const { health } = useForestData();
+  const tier = tierFromScore(health?.score ?? 100);
 
   const nav = [
     { to: "/app", label: "Forest", icon: Leaf },
@@ -13,7 +18,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   ];
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--canvas)" }}>
+    <div
+      data-forest-theme={tier}
+      className="relative min-h-screen"
+      style={{ background: "var(--canvas)" }}
+    >
+      <ThemeDecorations tier={tier} />
+      <div className="relative z-10">
+
       <header className="sticky top-0 z-40 backdrop-blur-md" style={{ background: "color-mix(in oklab, var(--canvas) 78%, transparent)", borderBottom: "1px solid var(--border)" }}>
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
           <Link to="/app" className="flex items-center gap-2">
@@ -72,7 +84,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </nav>
       </header>
-      <main className="mx-auto max-w-6xl px-4 py-6 md:py-10">{children}</main>
+      <main className="mx-auto max-w-6xl px-4 py-6 md:py-10">
+        {children}
+        <div className="pointer-events-none fixed bottom-3 right-3 z-20 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider" style={{ background: "color-mix(in oklab, var(--paper) 85%, transparent)", color: "var(--fern-shade)", border: "1px solid var(--border)" }}>
+          {tierLabel(tier)}
+        </div>
+      </main>
+      </div>
     </div>
   );
 }
+
