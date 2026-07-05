@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { getInitialSound } from "@/lib/preferences";
+import ambienceSrc from "@/assets/forest-ambience.ogg?url";
 
-// A soft, looping nature soundscape. Hosted on Pixabay CDN (royalty-free).
-const AMBIENT_SRC =
-  "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=forest-with-small-river-birds-and-nature-field-recording-6735.mp3";
+// A short forest-birds field recording, looped. Bundled locally so it is
+// always available and never blocked by hotlink / CORS.
+const AMBIENT_SRC = ambienceSrc;
 
 export function AmbientSound() {
   const ref = useRef<HTMLAudioElement | null>(null);
