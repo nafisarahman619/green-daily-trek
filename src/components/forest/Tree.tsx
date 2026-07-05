@@ -84,21 +84,70 @@ export function Tree({ stage, wilted, delay = 0, scale = 1 }: TreeProps) {
         )}
         {stage === "mature" && (
           <>
-            <path d="M60 160 Q58 122 58 88" stroke={TRUNK} strokeWidth="10" strokeLinecap="round" fill="none" />
+            <defs>
+              {/* Sunlit canopy gradient: bright yellow-green top → deep green bottom edges */}
+              <radialGradient id={canopyGrad} cx="45%" cy="30%" r="75%">
+                <stop offset="0%" stopColor="oklch(0.92 0.16 115)" />
+                <stop offset="35%" stopColor={c.bright} />
+                <stop offset="70%" stopColor={c.mid} />
+                <stop offset="100%" stopColor={c.deep} />
+              </radialGradient>
+              {/* Trunk gradient: shaded left → lit right */}
+              <linearGradient id={trunkGrad} x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0%" stopColor={TRUNK_DARK} />
+                <stop offset="55%" stopColor={TRUNK} />
+                <stop offset="100%" stopColor="oklch(0.5 0.06 55)" />
+              </linearGradient>
+              <radialGradient id={shadowGrad} cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="oklch(0.15 0.04 60 / 0.45)" />
+                <stop offset="100%" stopColor="oklch(0.15 0.04 60 / 0)" />
+              </radialGradient>
+            </defs>
+
+            {/* Soft ground shadow */}
+            <ellipse cx="60" cy="156" rx="34" ry="5" fill={`url(#${shadowGrad})`} />
+
+            {/* Trunk with gradient + bark lines */}
+            <path d="M60 160 Q58 122 58 88" stroke={`url(#${trunkGrad})`} strokeWidth="10" strokeLinecap="round" fill="none" />
+            <path d="M57 150 Q56 130 57 108" stroke={TRUNK_DARK} strokeWidth="1" strokeLinecap="round" fill="none" opacity="0.55" />
+            <path d="M61 148 Q62 128 61 104" stroke="oklch(0.5 0.06 55)" strokeWidth="0.8" strokeLinecap="round" fill="none" opacity="0.6" />
             <path d="M58 128 Q46 118 38 108" stroke={TRUNK_DARK} strokeWidth="5" strokeLinecap="round" fill="none" />
             <path d="M58 118 Q68 108 78 100" stroke={TRUNK_DARK} strokeWidth="5" strokeLinecap="round" fill="none" />
-            {/* Rich layered organic canopy */}
+
+            {/* Canopy silhouette (unchanged shape) now filled with radial gradient */}
             <path d="M60 24 Q28 26 16 52 Q4 68 18 84 Q10 102 34 108 Q42 122 62 116 Q86 122 96 104 Q114 96 106 76 Q116 58 96 46 Q92 26 60 24 Z" fill={c.deep} />
-            <path d="M60 30 Q34 32 24 54 Q14 68 28 82 Q24 98 46 104 Q54 114 66 110 Q84 116 92 100 Q106 92 100 76 Q106 60 88 50 Q84 30 60 30 Z" fill={c.mid} />
-            <path d="M58 38 Q40 40 32 58 Q26 72 40 82 Q44 94 60 92 Q76 96 82 82 Q92 74 84 62 Q84 46 58 38 Z" fill={c.bright} />
-            <path d="M48 50 Q38 54 40 68 Q50 76 58 68 Q62 58 48 50 Z" fill={c.bright} opacity="0.9" />
-            <path d="M74 56 Q86 58 84 76 Q74 82 68 72 Q68 58 74 56 Z" fill={c.mid} opacity="0.9" />
-            <ellipse cx="60" cy="108" rx="42" ry="10" fill={c.shade} opacity="0.4" />
-            <circle cx="42" cy="58" r="6" fill={c.bright} opacity="0.85" />
-            <circle cx="82" cy="66" r="5" fill={c.bright} opacity="0.75" />
-            <circle cx="60" cy="46" r="4" fill={c.bright} opacity="0.6" />
+            <path d="M60 24 Q28 26 16 52 Q4 68 18 84 Q10 102 34 108 Q42 122 62 116 Q86 122 96 104 Q114 96 106 76 Q116 58 96 46 Q92 26 60 24 Z" fill={`url(#${canopyGrad})`} />
+
+            {/* Leaf-cluster texture: irregular darker + lighter patches */}
+            <g opacity="0.55">
+              <circle cx="30" cy="70" r="8" fill={c.deep} />
+              <circle cx="22" cy="82" r="6" fill={c.deep} />
+              <circle cx="96" cy="88" r="7" fill={c.deep} />
+              <circle cx="88" cy="98" r="5" fill={c.deep} />
+              <circle cx="52" cy="102" r="6" fill={c.deep} />
+              <circle cx="72" cy="104" r="5" fill={c.deep} />
+              <circle cx="104" cy="72" r="5" fill={c.deep} />
+              <circle cx="14" cy="66" r="5" fill={c.deep} />
+            </g>
+            <g opacity="0.7">
+              <circle cx="46" cy="52" r="7" fill="oklch(0.88 0.15 118)" />
+              <circle cx="66" cy="42" r="6" fill="oklch(0.9 0.16 115)" />
+              <circle cx="80" cy="56" r="6" fill="oklch(0.85 0.15 118)" />
+              <circle cx="36" cy="60" r="4" fill="oklch(0.85 0.15 118)" />
+              <circle cx="58" cy="60" r="5" fill="oklch(0.88 0.15 115)" />
+              <circle cx="72" cy="70" r="4" fill="oklch(0.86 0.14 118)" />
+            </g>
+            {/* Small speckle highlights */}
+            <g opacity="0.8">
+              <circle cx="50" cy="48" r="1.6" fill="oklch(0.96 0.14 110)" />
+              <circle cx="68" cy="52" r="1.4" fill="oklch(0.96 0.14 110)" />
+              <circle cx="42" cy="66" r="1.2" fill="oklch(0.94 0.14 110)" />
+              <circle cx="78" cy="62" r="1.3" fill="oklch(0.94 0.14 110)" />
+              <circle cx="60" cy="38" r="1.5" fill="oklch(0.98 0.12 105)" />
+            </g>
           </>
         )}
+
       </g>
     </motion.svg>
   );
