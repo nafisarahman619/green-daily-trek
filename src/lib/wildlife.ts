@@ -57,8 +57,8 @@ export const SPECIES: Species[] = [
     id: "nightOwl",
     name: "Night Owl",
     emoji: "🦉",
-    requirement: "Log a trip during night hours (8pm–6am)",
-    test: (c) => c.nightLogs >= 1,
+    requirement: "Log night trips (8pm–6am) on 7 different days",
+    test: (c) => c.nightDays >= 7,
   },
   {
     id: "nightVisitor",
@@ -69,7 +69,8 @@ export const SPECIES: Species[] = [
   },
 ];
 
-export function evaluateUnlocks(ctx: { totalLogs: number; goodDays: number; streak: number; nightLogs: number }): string[] {
+export function evaluateUnlocks(ctx: { totalLogs: number; goodDays: number; streak: number; nightLogs: number; nightDays: number }): string[] {
   return SPECIES.filter((s) => s.test(ctx)).map((s) => s.id);
 }
+
 
