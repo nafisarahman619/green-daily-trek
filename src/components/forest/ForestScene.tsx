@@ -64,13 +64,17 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
   // so trees never clump or overlap into distorted shapes, even at mature (48 trees).
   const trees = useMemo(() => {
     const rng = mulberry32(1337);
-    const total = Math.max(1, treeCount);
-    // Row split: ~35% back, ~35% mid, ~30% front
-    const backN = Math.round(total * 0.35);
-    const midN = Math.round(total * 0.35);
-    const frontN = Math.max(0, total - backN - midN);
+    // Reference layout: a single band of trees along the horizon with all
+    // trunks fully visible descending into the grass. We use two thin
+    // depth rows both anchored HIGH (bases near the horizon line) so every
+    // trunk shows. Cap total so canopies don't smear together.
+    const total = Math.max(1, Math.min(treeCount, 18));
+    const backN = Math.round(total * 0.45);
+    const frontN = Math.max(0, total - backN);
 
-    const all: { x: number; base: number; s: number; stage: ForestHealth["stage"]; z: number; sway: number }[] = [];
+    const all: {
+      x: number; base: number; s: number; stage: ForestHealth["stage"]; z: number; sway: number;
+    }[] = [];
 
     const spread = (
       count: number,
@@ -84,8 +88,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
       if (count <= 0) return;
       const span = xMax - xMin;
       const step = span / count;
-      // Max jitter kept below half-step so slots never swap → no overlap
-      const jitterAmp = step * 0.35;
+      const jitterAmp = step * 0.28;
       for (let i = 0; i < count; i++) {
         const center = xMin + step * (i + 0.5);
         const x = center + (rng() - 0.5) * 2 * jitterAmp;
@@ -95,19 +98,27 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
       }
     };
 
-    // Back row (far, smaller, on horizon)
-    spread(backN, 2, 98, () => 26 + rng() * 8, () => 0.65 + rng() * 0.22,
-      downStage(downStage(health.stage)), (b) => 10 + Math.floor(b));
-    // Mid row
-    spread(midN, 1, 99, () => 14 + rng() * 12, () => 1.0 + rng() * 0.35,
-      downStage(health.stage), (b) => 40 + Math.floor((30 - b) * 2));
-    // Front row (large, low) — restrict to left side so pond area stays clear
-    spread(frontN, 2, 56, () => 2 + rng() * 10, () => 1.45 + rng() * 0.4,
-      health.stage, (b) => 80 + Math.floor((15 - b) * 3));
+    // Back band — slightly higher on the horizon, a touch smaller & desaturated
+    spread(
+      backN, 2, 98,
+      () => 74 + rng() * 6,           // high base = trunks visible below
+      () => 1.05 + rng() * 0.15,
+      downStage(health.stage),
+      (b) => 20 + Math.floor(b),
+    );
+    // Front band — anchored on the horizon line, larger canopies
+    spread(
+      frontN, 0, 100,
+      () => 62 + rng() * 6,
+      () => 1.3 + rng() * 0.2,
+      health.stage,
+      (b) => 60 + Math.floor((80 - b) * 2),
+    );
 
-    // Filter: no trees on pond area
+    // Filter: no trees over the pond
     return all.filter((t) => !inPond(t.x, t.base));
   }, [treeCount, health.stage]);
+
 
   // Dense grass tufts — clustered, varied heights & shades, avoiding pond
   const grasses = useMemo(() => {
