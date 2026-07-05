@@ -76,40 +76,41 @@ export const SPECIES: Species[] = [
   // ----- Long-term challenges -----
   {
     id: "carbonGuardian",
-    name: "Carbon Guardian",
-    emoji: "🛡️",
+    name: "Guardian Tortoise",
+    emoji: "🐢",
     requirement: "Maintain a 30-day low-emission streak",
     test: (c) => c.streak >= 30,
   },
   {
     id: "centuryLogger",
-    name: "Century Logger",
-    emoji: "💯",
+    name: "Golden Stag",
+    emoji: "🦌",
     requirement: "Log 100 total trips",
     test: (c) => c.totalTrips >= 100,
   },
   {
     id: "zeroEmissionWeek",
-    name: "Zero Emission Week",
-    emoji: "🌱",
+    name: "Crystal Dragonfly",
+    emoji: "🪰",
     requirement: "7 consecutive days using only walk or bike",
     test: (c) => c.zeroEmissionStreak >= 7,
   },
   {
     id: "marathonCommuter",
-    name: "Marathon Commuter",
-    emoji: "🏃",
+    name: "Wandering Crane",
+    emoji: "🕊️",
     requirement: "Cover 500 km on walk, bike, or metro",
     test: (c) => c.lowEmissionDistanceKm >= 500,
   },
   {
     id: "forestGuardian",
-    name: "Forest Guardian",
+    name: "Ancient Oak Spirit",
     emoji: "🌳",
     requirement: "Keep Forest Health at 90+ for 14 consecutive days",
     test: (c) => c.forestHealth90Streak >= 14,
   },
 ];
+
 
 export function evaluateUnlocks(ctx: UnlockCtx): string[] {
   return SPECIES.filter((s) => s.test(ctx)).map((s) => s.id);
