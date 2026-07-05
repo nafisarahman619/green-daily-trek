@@ -48,13 +48,18 @@ export function useForestData() {
         else break;
       }
       const totalCO2 = logs.reduce((s, l) => s + Number(l.co2_kg), 0);
+      const nightLogSet = new Set<string>();
       const nightLogs = logs.filter((l) => {
         const h = new Date(l.created_at).getHours();
-        return h >= 20 || h < 6;
+        const isNight = h >= 20 || h < 6;
+        if (isNight) nightLogSet.add(l.log_date);
+        return isNight;
       }).length;
+      const nightDays = nightLogSet.size;
 
       // Sync unlocks
-      const shouldUnlock = evaluateUnlocks({ totalLogs: dates.length, goodDays, streak, nightLogs });
+      const shouldUnlock = evaluateUnlocks({ totalLogs: dates.length, goodDays, streak, nightLogs, nightDays });
+
 
       const newlyUnlocked = shouldUnlock.filter((s) => !unlocked.has(s));
       if (newlyUnlocked.length > 0) {

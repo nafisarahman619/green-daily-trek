@@ -482,7 +482,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
             </div>
           </motion.div>
         )}
-        {tod === "night" && unlockedSpecies.includes("firefly") &&
+        {tod === "night" &&
           [0, 1, 2, 3, 4, 5].map((i) => (
             <motion.div
               key={`ff-${i}`}
