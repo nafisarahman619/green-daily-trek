@@ -55,18 +55,17 @@ export function RootNetwork({ lifetimeCO2Saved }: RootNetworkProps) {
           );
         })}
 
-        {/* Root strands */}
-        <g fill="none" strokeLinecap="round">
+        {/* Root strands — tapered organic shapes */}
+        <g strokeLinejoin="round">
           {strands.map((s, i) => (
             <motion.path
               key={`s-${i}`}
               d={s.d}
-              stroke={s.color}
-              strokeWidth={s.width}
+              fill={s.color}
               opacity={s.opacity}
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 1.6, delay: (i % 8) * 0.06, ease: "easeOut" }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: s.opacity }}
+              transition={{ duration: 0.9, delay: (i % 10) * 0.05, ease: "easeOut" }}
             />
           ))}
         </g>
@@ -109,54 +108,156 @@ export function RootNetwork({ lifetimeCO2Saved }: RootNetworkProps) {
 
 interface Strand {
   d: string;
-  width: number;
   opacity: number;
   color: string;
+}
+
+// A single tapered segment: cubic bezier centerline, sampled and offset
+// perpendicularly by a shrinking half-width to build a filled polygon.
+function taperedSegment(
+  x0: number,
+  y0: number,
+  x3: number,
+  y3: number,
+  c1x: number,
+  c1y: number,
+  c2x: number,
+  c2y: number,
+  wStart: number,
+  wEnd: number,
+  samples = 16,
+): string {
+  const pts: { x: number; y: number; nx: number; ny: number; w: number }[] = [];
+  for (let i = 0; i <= samples; i++) {
+    const t = i / samples;
+    const mt = 1 - t;
+    // Cubic bezier point
+    const x = mt * mt * mt * x0 + 3 * mt * mt * t * c1x + 3 * mt * t * t * c2x + t * t * t * x3;
+    const y = mt * mt * mt * y0 + 3 * mt * mt * t * c1y + 3 * mt * t * t * c2y + t * t * t * y3;
+    // Tangent (derivative)
+    const tx =
+      3 * mt * mt * (c1x - x0) + 6 * mt * t * (c2x - c1x) + 3 * t * t * (x3 - c2x);
+    const ty =
+      3 * mt * mt * (c1y - y0) + 6 * mt * t * (c2y - c1y) + 3 * t * t * (y3 - c2y);
+    const len = Math.hypot(tx, ty) || 1;
+    // Perpendicular unit
+    const nx = -ty / len;
+    const ny = tx / len;
+    // Ease-out taper (roots thin faster near the tip)
+    const w = wStart + (wEnd - wStart) * (1 - Math.pow(1 - t, 1.6));
+    pts.push({ x, y, nx, ny, w: w / 2 });
+  }
+  // Left edge start → end, then right edge end → start
+  let d = `M ${(pts[0].x + pts[0].nx * pts[0].w).toFixed(1)} ${(pts[0].y + pts[0].ny * pts[0].w).toFixed(1)}`;
+  for (let i = 1; i < pts.length; i++) {
+    d += ` L ${(pts[i].x + pts[i].nx * pts[i].w).toFixed(1)} ${(pts[i].y + pts[i].ny * pts[i].w).toFixed(1)}`;
+  }
+  // Round the tip a touch
+  const tip = pts[pts.length - 1];
+  d += ` L ${tip.x.toFixed(1)} ${tip.y.toFixed(1)}`;
+  for (let i = pts.length - 1; i >= 0; i--) {
+    d += ` L ${(pts[i].x - pts[i].nx * pts[i].w).toFixed(1)} ${(pts[i].y - pts[i].ny * pts[i].w).toFixed(1)}`;
+  }
+  d += " Z";
+  return d;
 }
 
 function buildStrands(count: number, depth: number, level: number): Strand[] {
   const rng = mulberry32(2027 + level);
   const out: Strand[] = [];
-  const palette = ["oklch(0.65 0.12 55)", "oklch(0.55 0.14 45)", "oklch(0.72 0.10 90)"];
+  const palette = [
+    "oklch(0.42 0.06 45)",
+    "oklch(0.48 0.08 55)",
+    "oklch(0.55 0.09 50)",
+    "oklch(0.38 0.05 40)",
+    "oklch(0.60 0.08 65)",
+  ];
 
   for (let i = 0; i < count; i++) {
-    // Start along the top edge (surface line).
-    const startX = 10 + ((800 - 20) * i) / Math.max(1, count - 1) + (rng() - 0.5) * 30;
-    const startY = 4 + rng() * 6;
-    const path = growBranch(startX, startY, 90 + (rng() - 0.5) * 40, 60 + rng() * 80, depth, rng);
-    out.push({
-      d: path,
-      width: 1.6 + rng() * 1.4,
-      opacity: 0.55 + rng() * 0.3,
-      color: palette[Math.floor(rng() * palette.length)],
-    });
+    // Start along the surface (top edge).
+    const startX = 12 + ((800 - 24) * i) / Math.max(1, count - 1) + (rng() - 0.5) * 34;
+    const startY = 2 + rng() * 5;
+    const angle = 88 + (rng() - 0.5) * 46; // mostly downward, some tilt
+    const length = 70 + rng() * 90;
+    const wStart = 4.5 + rng() * 3.2; // thick trunk-base
+    const color = palette[Math.floor(rng() * palette.length)];
+    const opacity = 0.72 + rng() * 0.22;
+    growRoot(out, startX, startY, angle, length, wStart, depth, rng, color, opacity);
   }
   return out;
 }
 
-// Recursive branch path in SVG "M ... Q ..." commands.
-function growBranch(
+function growRoot(
+  out: Strand[],
   x: number,
   y: number,
   angleDeg: number,
   length: number,
+  wStart: number,
   depth: number,
   rng: () => number,
-): string {
+  color: string,
+  opacity: number,
+) {
   const rad = (angleDeg * Math.PI) / 180;
-  const cx = x + Math.cos(rad) * length * 0.5 + (rng() - 0.5) * 20;
-  const cy = y + Math.sin(rad) * length * 0.5 + (rng() - 0.5) * 12;
   const ex = x + Math.cos(rad) * length;
   const ey = y + Math.sin(rad) * length;
-  let d = `M ${x.toFixed(1)} ${y.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
-  if (depth > 0 && ey < 285) {
-    const branches = 1 + Math.floor(rng() * 2);
-    for (let b = 0; b < branches; b++) {
-      const spread = (rng() - 0.5) * 70;
-      d += " " + growBranch(ex, ey, angleDeg + spread, length * (0.45 + rng() * 0.25), depth - 1, rng);
-    }
+
+  // Two control points → gentle S-curve, biased sideways for organic bend.
+  const bend1 = (rng() - 0.5) * length * 0.55;
+  const bend2 = (rng() - 0.5) * length * 0.55;
+  const perpX = -Math.sin(rad);
+  const perpY = Math.cos(rad);
+  const c1x = x + Math.cos(rad) * length * 0.33 + perpX * bend1;
+  const c1y = y + Math.sin(rad) * length * 0.33 + perpY * bend1;
+  const c2x = x + Math.cos(rad) * length * 0.66 + perpX * bend2;
+  const c2y = y + Math.sin(rad) * length * 0.66 + perpY * bend2;
+
+  // Taper — tip is 25–45% of base width, min 0.4 px.
+  const wEnd = Math.max(0.4, wStart * (0.25 + rng() * 0.2));
+
+  out.push({
+    d: taperedSegment(x, y, ex, ey, c1x, c1y, c2x, c2y, wStart, wEnd),
+    color,
+    opacity,
+  });
+
+  if (depth <= 0 || ey > 288) return;
+
+  // Asymmetric forking — 1–3 children, each starting somewhere along the parent
+  // (not just the tip) at varied angles/lengths.
+  const forkCount = 1 + Math.floor(rng() * 3);
+  for (let b = 0; b < forkCount; b++) {
+    // Where along the parent this fork sprouts (0.4–0.95).
+    const t = 0.4 + rng() * 0.55;
+    const mt = 1 - t;
+    const fx =
+      mt * mt * mt * x + 3 * mt * mt * t * c1x + 3 * mt * t * t * c2x + t * t * t * ex;
+    const fy =
+      mt * mt * mt * y + 3 * mt * mt * t * c1y + 3 * mt * t * t * c2y + t * t * t * ey;
+
+    // Side bias alternates + noise so branches don't mirror.
+    const side = b % 2 === 0 ? 1 : -1;
+    const spread = side * (25 + rng() * 45) + (rng() - 0.5) * 15;
+    const childAngle = angleDeg + spread;
+    const childLen = length * (0.42 + rng() * 0.35);
+    // Child base width = parent width at t, slightly reduced.
+    const parentWAt = wStart + (wEnd - wStart) * (1 - Math.pow(1 - t, 1.6));
+    const childWStart = Math.max(0.6, parentWAt * (0.55 + rng() * 0.25));
+
+    growRoot(
+      out,
+      fx,
+      fy,
+      childAngle,
+      childLen,
+      childWStart,
+      depth - 1,
+      rng,
+      color,
+      Math.max(0.4, opacity - 0.05 - rng() * 0.08),
+    );
   }
-  return d;
 }
 
 function buildNodes(count: number, level: number) {
