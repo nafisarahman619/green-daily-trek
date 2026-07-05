@@ -121,21 +121,25 @@ function ProfilePage() {
 
       <div className="mb-6 flex items-center gap-4">
         <div className="relative">
+          <div
+            className="grid h-20 w-20 place-items-center overflow-hidden rounded-full text-3xl"
+            style={{ background: "var(--canvas-warm)", border: "1.5px solid var(--border)" }}
+          >
+            {avatarSrc ? (
+              <img src={avatarSrc} alt={`${name}'s profile picture`} className="h-full w-full object-cover" />
+            ) : (
+              <span>{profile?.avatar_emoji ?? "🌱"}</span>
+            )}
+          </div>
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
             aria-label="Upload profile picture"
-            className="grid h-20 w-20 place-items-center overflow-hidden rounded-full text-3xl disabled:opacity-60"
-            style={{ background: "var(--canvas-warm)", border: "1.5px solid var(--border)" }}
+            className="absolute -bottom-1 -right-1 grid h-8 w-8 place-items-center rounded-full text-white shadow-md transition-transform hover:scale-105 disabled:opacity-60"
+            style={{ background: "var(--fern)" }}
           >
-            {uploading ? (
-              <Loader2 className="h-6 w-6 animate-spin" style={{ color: "var(--fern)" }} />
-            ) : avatarSrc ? (
-              <img src={avatarSrc} alt={`${name}'s profile picture`} className="h-full w-full object-cover" />
-            ) : (
-              <span>{profile?.avatar_emoji ?? "🌱"}</span>
-            )}
+            {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
           </button>
           <input
             ref={fileInputRef}
