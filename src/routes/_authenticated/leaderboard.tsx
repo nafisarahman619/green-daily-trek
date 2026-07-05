@@ -68,7 +68,7 @@ function LeaderboardPage() {
           };
         })
         .filter((r) => (dayTotals.get(r.user_id)?.size ?? 0) > 0)
-        .sort((a, b) => b.score - a.score || b.good_days - a.good_days)
+        .sort((a, b) => b.good_days - a.good_days || a.total_co2 - b.total_co2)
         .slice(0, 25);
     },
   });
@@ -80,7 +80,7 @@ function LeaderboardPage() {
           <div>
             <h1 className="display text-3xl md:text-4xl">Forest leaderboard</h1>
             <p className="mt-1 text-sm" style={{ color: "var(--ink-soft)" }}>
-              Ranked by forest health across the last logged weeks.
+              Ranked by total days logged under {DAILY_BASELINE_KG} kg CO₂.
             </p>
           </div>
           <span className="chip-soft"><Trophy className="h-3.5 w-3.5" /> Top {data?.length ?? 0}</span>
@@ -134,8 +134,8 @@ function LeaderboardPage() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="display text-2xl" style={{ color: "var(--fern-shade)" }}>{r.score}</p>
-                  <p className="text-[10px] uppercase tracking-wider" style={{ color: "var(--ink-soft)" }}>health</p>
+                  <p className="display text-2xl" style={{ color: "var(--fern-shade)" }}>{r.good_days}</p>
+                  <p className="text-[10px] uppercase tracking-wider" style={{ color: "var(--ink-soft)" }}>good days</p>
                 </div>
               </motion.li>
             );
