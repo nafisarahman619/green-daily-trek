@@ -419,7 +419,17 @@ export function ForestScene({ health, unlockedSpecies, compact, weeklyCO2 = 0 }:
                   transformOrigin: "bottom center",
                 }}
               >
-                <Tree stage="mature" delay={Math.min(i * 0.03, 0.9)} />
+                <Tree
+                  stage={
+                    activeStumps.has(i)
+                      ? "stump"
+                      : regrowing[i] !== undefined
+                      ? "sapling"
+                      : "mature"
+                  }
+                  delay={Math.min(i * 0.03, 0.9)}
+                />
+
 
               </div>
             </div>
