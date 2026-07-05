@@ -85,13 +85,14 @@ export function Tree({ stage, wilted, delay = 0, scale = 1 }: TreeProps) {
         {stage === "mature" && (
           <>
             <defs>
-              {/* Sunlit canopy gradient: bright yellow-green top → deep green bottom edges */}
+              {/* Sunlit canopy gradient: light green top → deep green shaded edges (no yellow) */}
               <radialGradient id={canopyGrad} cx="45%" cy="30%" r="75%">
-                <stop offset="0%" stopColor="oklch(0.92 0.16 115)" />
+                <stop offset="0%" stopColor="oklch(0.82 0.14 145)" />
                 <stop offset="35%" stopColor={c.bright} />
                 <stop offset="70%" stopColor={c.mid} />
                 <stop offset="100%" stopColor={c.deep} />
               </radialGradient>
+
               {/* Trunk gradient: shaded left → lit right */}
               <linearGradient id={trunkGrad} x1="0" x2="1" y1="0" y2="0">
                 <stop offset="0%" stopColor={TRUNK_DARK} />
