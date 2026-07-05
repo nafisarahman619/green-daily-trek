@@ -499,35 +499,42 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
             key="owl"
             className="absolute"
             style={{ left: "24%", bottom: "26%", zIndex: 55 }}
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: [0, -1.5, 0] }}
-            transition={{ opacity: { duration: 0.8 }, y: { duration: 4, repeat: Infinity, ease: "easeInOut" } }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ opacity: { duration: 0.8 } }}
           >
-            <div style={{ position: "relative" }}>
-              {/* Branch under owl */}
+            <div style={{ position: "relative", width: 44, height: 60 }}>
+              {/* Branch — fixed, no motion */}
               <div
                 aria-hidden
                 style={{
                   position: "absolute",
                   left: "50%",
-                  bottom: -3,
-                  width: 46,
-                  height: 4,
+                  bottom: 0,
+                  width: 60,
+                  height: 5,
                   transform: "translateX(-50%) rotate(-4deg)",
                   background: "linear-gradient(180deg, oklch(0.32 0.05 45), oklch(0.22 0.04 40))",
                   borderRadius: 2,
                   boxShadow: "0 1px 0 oklch(0.14 0.03 40 / 0.6)",
                 }}
               />
-              <Creature id="owl" />
+              {/* Owl — seated on branch, only owl has subtle bob */}
+              <motion.div
+                style={{ position: "absolute", left: "50%", bottom: 3, transform: "translateX(-50%)" }}
+                animate={{ y: [0, -1.2, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <Creature id="owl" />
+              </motion.div>
               {/* Leaves tucked in front, partially overlapping the owl */}
               <svg
                 aria-hidden
                 viewBox="0 0 60 40"
                 style={{
                   position: "absolute",
-                  left: -14,
-                  top: -6,
+                  left: -18,
+                  top: 4,
                   width: 42,
                   height: 30,
                   pointerEvents: "none",
@@ -542,8 +549,8 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
                 viewBox="0 0 60 40"
                 style={{
                   position: "absolute",
-                  right: -12,
-                  top: 4,
+                  right: -16,
+                  top: 14,
                   width: 36,
                   height: 26,
                   pointerEvents: "none",
@@ -555,6 +562,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
             </div>
           </motion.div>
         )}
+
 
         {tod === "night" && unlockedSpecies.includes("nightVisitor") && (
           <>
