@@ -29,8 +29,15 @@ export function TreesToPlantCard({
   });
 
   const owed = useMemo(() => {
-    const totalKg = logs.reduce((s, l) => s + Number(l.co2_kg), 0);
-    return Math.max(0, Math.floor(totalKg / KG_PER_TREE));
+    const byDate = new Map<string, number>();
+    logs.forEach((l) =>
+      byDate.set(l.log_date, (byDate.get(l.log_date) ?? 0) + Number(l.co2_kg)),
+    );
+    let total = 0;
+    for (const kg of byDate.values()) {
+      if (kg > 0) total += Math.ceil(kg / KG_PER_TREE);
+    }
+    return total;
   }, [logs]);
 
   const planted = plantings.data ?? 0;
