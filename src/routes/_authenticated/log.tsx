@@ -28,33 +28,11 @@ function LogPage() {
   const [busy, setBusy] = useState(false);
   const [celebrate, setCelebrate] = useState<null | "good" | "storm" | "neutral">(null);
 
-  // Load any trips already saved for the selected date so a second logging
-  // session on the same day APPENDS rather than replaces.
+  // Always start a fresh entry form. Any existing trips for this date remain
+  // in the database — new submissions APPEND to them so the day's total is
+  // the sum of all trips logged that day.
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) return;
-      const { data } = await supabase
-        .from("transport_logs")
-        .select("mode,distance_km")
-        .eq("user_id", user.user.id)
-        .eq("log_date", date);
-      if (cancelled) return;
-      if (data && data.length > 0) {
-        setTrips(
-          data.map((r: any) => ({
-            mode: r.mode as TransportMode,
-            km: Number(r.distance_km),
-          })),
-        );
-      } else {
-        setTrips([{ mode: "walk", km: 2 }]);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
+    setTrips([{ mode: "walk", km: 2 }]);
   }, [date]);
 
   const totalCO2 = trips.reduce((s, t) => s + co2ForTrip(t.mode, t.km), 0);
@@ -68,8 +46,8 @@ function LogPage() {
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) throw new Error("Not signed in");
 
-      // Replace the day: delete existing rows then insert one per trip.
-      await supabase.from("transport_logs").delete().eq("user_id", user.user.id).eq("log_date", date);
+      // Append new trips for the day — do NOT delete existing rows.
+      // This preserves earlier logs so the day's CO2 is the sum of all trips.
       const rows = trips.map((t) => ({
         user_id: user.user!.id,
         log_date: date,
@@ -88,6 +66,7 @@ function LogPage() {
       toast.error(e?.message ?? "Could not save");
       setBusy(false);
     }
+
   };
 
 
