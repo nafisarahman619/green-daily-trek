@@ -337,19 +337,56 @@ export function Creature({ id, variant = 1 }: { id: string; variant?: 1 | 2 | 3 
     case "owl":
       return (
         <svg viewBox="0 0 50 50" style={{ width: 44, height: 44, overflow: "visible" }}>
+          {/* Body & feet stay put */}
           <ellipse cx="25" cy="30" rx="14" ry="16" fill="oklch(0.35 0.04 60)" />
-          <path d="M13 18 L18 10 L20 18 Z" fill="oklch(0.32 0.04 60)" />
-          <path d="M37 18 L32 10 L30 18 Z" fill="oklch(0.32 0.04 60)" />
-          <circle cx="19" cy="24" r="5" fill="oklch(0.95 0.05 80)" />
-          <circle cx="31" cy="24" r="5" fill="oklch(0.95 0.05 80)" />
-          <circle cx="19" cy="24" r="2.2" fill={TRUNK_DARK} />
-          <circle cx="31" cy="24" r="2.2" fill={TRUNK_DARK} />
-          <circle cx="19.6" cy="23.4" r="0.7" fill="white" />
-          <circle cx="31.6" cy="23.4" r="0.7" fill="white" />
-          <path d="M22 29 L25 32 L28 29 Z" fill="oklch(0.7 0.16 55)" />
           <path d="M14 40 Q18 44 22 40 M28 40 Q32 44 36 40" stroke="oklch(0.28 0.04 60)" strokeWidth="1" fill="none" opacity="0.6" />
+          {/* Head group — subtle occasional look around */}
+          <g style={{ transformOrigin: "25px 24px" }}>
+            <animateTransform
+              attributeName="transform"
+              type="translate"
+              values="0 0; 0 0; 0 0; -1.4 0; -1.4 0; 0 0; 0 0; 1.6 0; 1.6 0; 0 0; 0 0; 0 0"
+              keyTimes="0; 0.15; 0.28; 0.32; 0.42; 0.46; 0.6; 0.64; 0.74; 0.78; 0.9; 1"
+              dur="9s"
+              repeatCount="indefinite"
+              calcMode="spline"
+              keySplines="0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1; 0.4 0 0.2 1"
+            />
+            <path d="M13 18 L18 10 L20 18 Z" fill="oklch(0.32 0.04 60)" />
+            <path d="M37 18 L32 10 L30 18 Z" fill="oklch(0.32 0.04 60)" />
+            <circle cx="19" cy="24" r="5" fill="oklch(0.95 0.05 80)" />
+            <circle cx="31" cy="24" r="5" fill="oklch(0.95 0.05 80)" />
+            {/* Left eye — pupil + highlight, with periodic blink */}
+            <g style={{ transformOrigin: "19px 24px" }}>
+              <animateTransform
+                attributeName="transform"
+                type="scale"
+                values="1 1; 1 1; 1 1; 1 1; 1 0.1; 1 1; 1 1; 1 1; 1 0.1; 1 1"
+                keyTimes="0; 0.35; 0.4; 0.42; 0.44; 0.46; 0.75; 0.77; 0.79; 1"
+                dur="5s"
+                repeatCount="indefinite"
+              />
+              <circle cx="19" cy="24" r="2.2" fill={TRUNK_DARK} />
+              <circle cx="19.6" cy="23.4" r="0.7" fill="white" />
+            </g>
+            {/* Right eye */}
+            <g style={{ transformOrigin: "31px 24px" }}>
+              <animateTransform
+                attributeName="transform"
+                type="scale"
+                values="1 1; 1 1; 1 1; 1 1; 1 0.1; 1 1; 1 1; 1 1; 1 0.1; 1 1"
+                keyTimes="0; 0.35; 0.4; 0.42; 0.44; 0.46; 0.75; 0.77; 0.79; 1"
+                dur="5s"
+                repeatCount="indefinite"
+              />
+              <circle cx="31" cy="24" r="2.2" fill={TRUNK_DARK} />
+              <circle cx="31.6" cy="23.4" r="0.7" fill="white" />
+            </g>
+            <path d="M22 29 L25 32 L28 29 Z" fill="oklch(0.7 0.16 55)" />
+          </g>
         </svg>
       );
+
     default:
       return null;
   }
