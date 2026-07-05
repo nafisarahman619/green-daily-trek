@@ -114,7 +114,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
   const flowers = useMemo(() => {
     const rng = mulberry32(99);
     const arr: { x: number; base: number; variant: 1 | 2 | 3; delay: number }[] = [];
-    for (let i = 0; i < 22; i++) {
+    for (let i = 0; i < 65; i++) {
       const x = rng() * 100;
       const base = 2 + rng() * 14;
       if (inPond(x, base)) continue;
