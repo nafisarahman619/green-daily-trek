@@ -429,15 +429,15 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
           <motion.div
             key="bird"
             className="absolute"
-            style={{ top: "28%", left: 0, zIndex: 200, willChange: "transform" }}
+            style={{ top: "28%", left: 0, right: 0, zIndex: 200, pointerEvents: "none" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ opacity: { duration: 0.6 } }}
           >
             <motion.div
-              animate={{ x: ["-10%", "110%"] }}
+              style={{ position: "absolute", top: 0, willChange: "left" }}
+              animate={{ left: ["-8%", "108%"] }}
               transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
-              style={{ width: "100vw", maxWidth: "100%" }}
             >
               <motion.div
                 animate={{ y: [0, -14, 4, -10, 0] }}
