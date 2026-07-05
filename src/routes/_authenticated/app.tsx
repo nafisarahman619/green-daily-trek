@@ -10,6 +10,7 @@ import { Sparkles, Sprout, TrendingDown, TreePine, Cloud } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { SPECIES } from "@/lib/wildlife";
 import { timeOfDay, DAILY_BASELINE_KG } from "@/lib/transport";
+import { TreesToPlantCard } from "@/components/forest/TreesToPlantCard";
 
 export const Route = createFileRoute("/_authenticated/app")({
   head: () => ({
