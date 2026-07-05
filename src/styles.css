@@ -202,11 +202,15 @@
 @layer base {
   * { border-color: var(--color-border); }
   html, body { font-family: var(--font-body); }
+  html {
+    overflow-x: clip;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-feature-settings: "ss01", "cv11";
     -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
   }
   h1, h2, h3, h4, h5, .display {
     font-family: var(--font-display);
@@ -219,6 +223,7 @@
 /* ---------- Custom utilities ---------- */
 
 @utility surface-card {
+  min-width: 0;
   background: var(--paper);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
