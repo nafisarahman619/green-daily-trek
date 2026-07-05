@@ -109,7 +109,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
     const filtered = all.filter((t) => !inPond(t.x, t.base));
     // Slice to current treeCount, preferring a balanced mix (interleave back/mid/front)
     return filtered.slice(0, Math.min(treeCount, filtered.length));
-  }, [treeCount, health.stage]);
+  }, [treeCount, health.stage, pondBuf]);
 
   // Dense grass tufts — clustered, varied heights & shades, avoiding pond
   const grasses = useMemo(() => {
