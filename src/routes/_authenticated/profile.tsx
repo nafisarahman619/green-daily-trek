@@ -76,32 +76,6 @@ function ProfilePage() {
 
   return (
     <AppShell>
-      {/* Daily motivation */}
-      <div
-        className="mb-6 rounded-2xl p-5 md:p-6"
-        style={{
-          background: "linear-gradient(160deg, color-mix(in oklab, var(--pistachio) 35%, var(--paper)), var(--paper))",
-          border: "1px solid var(--border)",
-          boxShadow: "var(--shadow-soft)",
-        }}
-      >
-        <div className="flex items-start gap-3">
-          <div
-            className="grid h-10 w-10 place-items-center rounded-xl"
-            style={{ background: "linear-gradient(180deg, var(--fern-glow), var(--fern))", color: "white" }}
-          >
-            <Sparkles className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-xs font-bold uppercase tracking-wider" style={{ color: "var(--ink-soft)" }}>
-              A note for today
-            </p>
-            <p className="display mt-1 text-lg leading-snug md:text-xl" style={{ color: "var(--delft-deep)" }}>
-              {motivation}
-            </p>
-          </div>
-        </div>
-      </div>
 
       <div className="mb-6">
         <h1 className="display text-3xl md:text-4xl">Profile</h1>
