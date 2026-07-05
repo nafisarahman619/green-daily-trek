@@ -253,26 +253,25 @@ export function Creature({ id, variant = 1 }: { id: string; variant?: 1 | 2 | 3 
       } as const;
       const p = palettes[variant];
       return (
-        <svg viewBox="0 0 40 30" style={{ width: 30, height: 22, overflow: "visible" }}>
-          {/* Side-view butterfly: horizontal body, wings flap vertically (as if tilting toward/away from viewer) */}
-          {/* Rear wing (further from viewer) — slightly smaller & darker */}
-          <g style={{ transformOrigin: "20px 16px", animation: "bfly-flap-side-back 0.45s ease-in-out infinite" }}>
-            <ellipse cx="17" cy="9" rx="7" ry="6" fill={p.wingB} opacity="0.75" />
-            <ellipse cx="19" cy="18" rx="5" ry="4" fill={p.wingA} opacity="0.7" />
+        <svg viewBox="0 0 40 30" style={{ width: 34, height: 26, overflow: "visible" }}>
+          {/* Left wing pair — flap around body midline */}
+          <g style={{ transformOrigin: "20px 15px", animation: "bfly-flap-l 0.5s ease-in-out infinite" }}>
+            <ellipse cx="12" cy="11" rx="10" ry="8" fill={p.wingA} />
+            <ellipse cx="12" cy="20" rx="8" ry="6" fill={p.wingB} />
+            <circle cx="10" cy="11" r="2" fill={p.spot} />
+            <circle cx="10" cy="11" r="0.9" fill={p.accent} />
+            <path d="M6 20 Q12 18 16 21" stroke={p.spot} strokeWidth="0.9" fill="none" opacity="0.75" />
           </g>
-          {/* Front wing (closer to viewer) */}
-          <g style={{ transformOrigin: "20px 16px", animation: "bfly-flap-side-front 0.45s ease-in-out infinite" }}>
-            <ellipse cx="18" cy="10" rx="8" ry="7" fill={p.wingA} />
-            <ellipse cx="20" cy="19" rx="6" ry="5" fill={p.wingB} />
-            <circle cx="16" cy="9" r="1.6" fill={p.spot} />
-            <circle cx="16" cy="9" r="0.7" fill={p.accent} />
-            <path d="M14 19 Q19 17 23 20" stroke={p.spot} strokeWidth="0.8" fill="none" opacity="0.7" />
+          {/* Right wing pair */}
+          <g style={{ transformOrigin: "20px 15px", animation: "bfly-flap-r 0.5s ease-in-out infinite" }}>
+            <ellipse cx="28" cy="11" rx="10" ry="8" fill={p.wingA} />
+            <ellipse cx="28" cy="20" rx="8" ry="6" fill={p.wingB} />
+            <circle cx="30" cy="11" r="2" fill={p.spot} />
+            <circle cx="30" cy="11" r="0.9" fill={p.accent} />
+            <path d="M24 20 Q28 18 34 21" stroke={p.spot} strokeWidth="0.9" fill="none" opacity="0.75" />
           </g>
-          {/* Body — horizontal, side profile */}
-          <ellipse cx="22" cy="16" rx="6" ry="1.4" fill={TRUNK_DARK} />
-          {/* Head + antennae pointing in direction of flight (right) */}
-          <circle cx="28" cy="16" r="1.5" fill={TRUNK_DARK} />
-          <path d="M28 15 Q31 12 33 11 M28 15 Q31 13 34 13" stroke={TRUNK_DARK} strokeWidth="0.6" fill="none" />
+          <rect x="19" y="8" width="2" height="16" rx="1" fill={TRUNK_DARK} />
+          <path d="M20 8 Q18 4 16 3 M20 8 Q22 4 24 3" stroke={TRUNK_DARK} strokeWidth="0.6" fill="none" />
         </svg>
       );
     }
