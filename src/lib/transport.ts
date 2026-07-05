@@ -59,7 +59,9 @@ export interface ForestHealth {
 
 export function computeHealth(recent: { co2_kg: number; log_date: string }[]): ForestHealth {
   // Today-only: forest resets each new day and reflects only today's trips.
-  const today = new Date().toISOString().slice(0, 10);
+  // Use LOCAL calendar date (matches how log_date is written on Log day).
+  const d = new Date();
+  const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   const todays = recent.filter((r) => r.log_date === today);
 
   if (todays.length === 0) {
