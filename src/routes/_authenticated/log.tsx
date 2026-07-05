@@ -23,6 +23,7 @@ type Trip = { mode: TransportMode; km: number };
 
 function LogPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const today = (() => {
     const d = new Date();
     const y = d.getFullYear();
