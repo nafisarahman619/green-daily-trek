@@ -406,9 +406,9 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
       <AnimatePresence>
         {unlockedSpecies.includes("butterfly") &&
           ([
-            { left: "22%", bottom: "55%", variant: 1 as const, xPath: [0, 30, 10, 40, 0], yPath: [0, -12, 6, -8, 0], dur: 12 },
-            { left: "55%", bottom: "42%", variant: 2 as const, xPath: [0, -25, 15, -10, 0], yPath: [0, 8, -14, 4, 0], dur: 14 },
-            { left: "78%", bottom: "50%", variant: 3 as const, xPath: [0, 20, -18, 12, 0], yPath: [0, -10, 12, -6, 0], dur: 11 },
+            { left: "22%", bottom: "22%", variant: 1 as const, xPath: [0, 30, 10, 40, 0], yPath: [0, -12, 6, -8, 0], dur: 12 },
+            { left: "55%", bottom: "14%", variant: 2 as const, xPath: [0, -25, 15, -10, 0], yPath: [0, 8, -14, 4, 0], dur: 14 },
+            { left: "78%", bottom: "18%", variant: 3 as const, xPath: [0, 20, -18, 12, 0], yPath: [0, -10, 12, -6, 0], dur: 11 },
           ]).map((b, i) => (
             <motion.div
               key={`bfly-${i}`}
