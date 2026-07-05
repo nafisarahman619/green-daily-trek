@@ -264,12 +264,11 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
           // Convert base (percent of scene height) to percent of ground layer height
           const bottomPct = (t.base / GROUND_TOP) * 100;
           const isFar = t.s < 0.9;
-          // PREVIEW: slimmer + taller + moderately smaller — mature stage only.
-          // If you like it, I'll apply to sapling/young/seedling too.
-          const isPreviewShape = t.stage === "mature";
-          const shapeScaleX = isPreviewShape ? 0.62 : 1;
-          const shapeScaleY = isPreviewShape ? 1.05 : 1;
-          const sizeMul = isPreviewShape ? 0.72 : 1;
+          // Slimmer, slightly rounder, moderately smaller — applied uniformly to every stage.
+          const shapeScaleX = 0.72;
+          const shapeScaleY = 0.9;
+          const sizeMul = 0.7;
+
           return (
             <div
               key={`tr-${i}`}
