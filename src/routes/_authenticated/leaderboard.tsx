@@ -68,7 +68,7 @@ function LeaderboardPage() {
           };
         })
         .filter((r) => (dayTotals.get(r.user_id)?.size ?? 0) > 0)
-        .sort((a, b) => b.score - a.score || b.good_days - a.good_days)
+        .sort((a, b) => b.good_days - a.good_days || a.total_co2 - b.total_co2)
         .slice(0, 25);
     },
   });
