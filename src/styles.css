@@ -405,10 +405,7 @@
   50% { transform: rotate(30deg); }
 }
 
-/* Scrollbar polish */
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--delft) 25%, transparent); border-radius: 999px; }
-::-webkit-scrollbar-track { background: transparent; }
+/* Use the browser's native scrollbar — no custom track/thumb. */
 
 /* =========================================================
    FOREST HEALTH THEME TIERS
