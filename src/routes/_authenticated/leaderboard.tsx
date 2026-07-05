@@ -133,6 +133,16 @@ function LeaderboardPage() {
                     <Tree stage={stage as any} />
                   </div>
                 </div>
+                <div
+                  className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full text-lg"
+                  style={{ background: "var(--canvas-warm)", border: "1.5px solid var(--border)" }}
+                >
+                  {r.avatar_signed ? (
+                    <img src={r.avatar_signed} alt={`${r.display_name}'s profile picture`} className="h-full w-full object-cover" />
+                  ) : (
+                    <span aria-hidden>{r.avatar_emoji}</span>
+                  )}
+                </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate display text-lg" style={{ color: "var(--delft-deep)" }}>
                     <span className="mr-1">{r.avatar_emoji}</span> {r.display_name}
