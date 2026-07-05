@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MODES, TransportMode, calcCO2Kg } from "@/lib/transport";
 const co2ForTrip = (mode: TransportMode, km: number) => calcCO2Kg(mode, km, 1);
