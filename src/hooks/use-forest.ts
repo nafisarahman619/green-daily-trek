@@ -28,13 +28,13 @@ export function useForestData() {
       const [logsRes, unlocksRes] = await Promise.all([
         supabase
           .from("transport_logs")
-          .select("co2_kg,log_date,mode,created_at")
+          .select("co2_kg,log_date,mode,distance_km,created_at")
           .eq("user_id", userId!)
           .order("log_date", { ascending: false })
-          .limit(200),
+          .limit(2000),
         supabase.from("wildlife_unlocks").select("species").eq("user_id", userId!),
       ]);
-      const logs = (logsRes.data ?? []) as { co2_kg: number; log_date: string; mode: string; created_at: string }[];
+      const logs = (logsRes.data ?? []) as { co2_kg: number; log_date: string; mode: string; distance_km: number; created_at: string }[];
       const unlocked = new Set((unlocksRes.data ?? []).map((r: any) => r.species as string));
 
       // Aggregate by date
@@ -57,9 +57,49 @@ export function useForestData() {
       }).length;
       const nightDays = nightLogSet.size;
 
-      // Sync unlocks
-      const shouldUnlock = evaluateUnlocks({ totalLogs: dates.length, goodDays, streak, nightLogs, nightDays });
+      // Zero-emission days: every trip that day is walk or bike
+      const modesByDate = new Map<string, string[]>();
+      logs.forEach((l) => {
+        const arr = modesByDate.get(l.log_date) ?? [];
+        arr.push(l.mode);
+        modesByDate.set(l.log_date, arr);
+      });
+      let zeroEmissionStreak = 0;
+      for (const [date] of dates) {
+        const modes = modesByDate.get(date) ?? [];
+        const allZero = modes.length > 0 && modes.every((m) => m === "walk" || m === "bike");
+        if (allZero) zeroEmissionStreak++;
+        else break;
+      }
 
+      // Total low-emission distance (walk / bike / metro)
+      const lowEmissionDistanceKm = logs
+        .filter((l) => l.mode === "walk" || l.mode === "bike" || l.mode === "metro")
+        .reduce((s, l) => s + Number(l.distance_km ?? 0), 0);
+
+      // Forest-health-90 streak: consecutive most-recent days with score >= 90
+      // score = round(55 + (baseline - dayTotal) * 12); >=90 means dayTotal <= ~(baseline - 35/12)
+      const health90Threshold = DAILY_BASELINE_KG - 35 / 12;
+      let forestHealth90Streak = 0;
+      for (const [, v] of dates) {
+        if (v <= health90Threshold) forestHealth90Streak++;
+        else break;
+      }
+
+      const totalTrips = logs.length;
+
+      // Sync unlocks
+      const shouldUnlock = evaluateUnlocks({
+        totalLogs: dates.length,
+        totalTrips,
+        goodDays,
+        streak,
+        nightLogs,
+        nightDays,
+        zeroEmissionStreak,
+        lowEmissionDistanceKm,
+        forestHealth90Streak,
+      });
 
       const newlyUnlocked = shouldUnlock.filter((s) => !unlocked.has(s));
       if (newlyUnlocked.length > 0) {
@@ -68,6 +108,7 @@ export function useForestData() {
           .insert(newlyUnlocked.map((species) => ({ user_id: userId!, species })));
         newlyUnlocked.forEach((s) => unlocked.add(s));
       }
+
 
       return {
         logs,
