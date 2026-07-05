@@ -85,13 +85,14 @@ export function Tree({ stage, wilted, delay = 0, scale = 1 }: TreeProps) {
         {stage === "mature" && (
           <>
             <defs>
-              {/* Sunlit canopy gradient: bright yellow-green top → deep green bottom edges */}
+              {/* Sunlit canopy gradient: light green top → deep green shaded edges (no yellow) */}
               <radialGradient id={canopyGrad} cx="45%" cy="30%" r="75%">
-                <stop offset="0%" stopColor="oklch(0.92 0.16 115)" />
+                <stop offset="0%" stopColor="oklch(0.82 0.14 145)" />
                 <stop offset="35%" stopColor={c.bright} />
                 <stop offset="70%" stopColor={c.mid} />
                 <stop offset="100%" stopColor={c.deep} />
               </radialGradient>
+
               {/* Trunk gradient: shaded left → lit right */}
               <linearGradient id={trunkGrad} x1="0" x2="1" y1="0" y2="0">
                 <stop offset="0%" stopColor={TRUNK_DARK} />
@@ -130,21 +131,22 @@ export function Tree({ stage, wilted, delay = 0, scale = 1 }: TreeProps) {
               <circle cx="14" cy="66" r="5" fill={c.deep} />
             </g>
             <g opacity="0.7">
-              <circle cx="46" cy="52" r="7" fill="oklch(0.88 0.15 118)" />
-              <circle cx="66" cy="42" r="6" fill="oklch(0.9 0.16 115)" />
-              <circle cx="80" cy="56" r="6" fill="oklch(0.85 0.15 118)" />
-              <circle cx="36" cy="60" r="4" fill="oklch(0.85 0.15 118)" />
-              <circle cx="58" cy="60" r="5" fill="oklch(0.88 0.15 115)" />
-              <circle cx="72" cy="70" r="4" fill="oklch(0.86 0.14 118)" />
+              <circle cx="46" cy="52" r="7" fill="oklch(0.78 0.14 145)" />
+              <circle cx="66" cy="42" r="6" fill="oklch(0.8 0.14 145)" />
+              <circle cx="80" cy="56" r="6" fill="oklch(0.76 0.14 145)" />
+              <circle cx="36" cy="60" r="4" fill="oklch(0.76 0.14 145)" />
+              <circle cx="58" cy="60" r="5" fill="oklch(0.78 0.14 145)" />
+              <circle cx="72" cy="70" r="4" fill="oklch(0.76 0.13 145)" />
             </g>
             {/* Small speckle highlights */}
             <g opacity="0.8">
-              <circle cx="50" cy="48" r="1.6" fill="oklch(0.96 0.14 110)" />
-              <circle cx="68" cy="52" r="1.4" fill="oklch(0.96 0.14 110)" />
-              <circle cx="42" cy="66" r="1.2" fill="oklch(0.94 0.14 110)" />
-              <circle cx="78" cy="62" r="1.3" fill="oklch(0.94 0.14 110)" />
-              <circle cx="60" cy="38" r="1.5" fill="oklch(0.98 0.12 105)" />
+              <circle cx="50" cy="48" r="1.6" fill="oklch(0.88 0.13 145)" />
+              <circle cx="68" cy="52" r="1.4" fill="oklch(0.88 0.13 145)" />
+              <circle cx="42" cy="66" r="1.2" fill="oklch(0.86 0.13 145)" />
+              <circle cx="78" cy="62" r="1.3" fill="oklch(0.86 0.13 145)" />
+              <circle cx="60" cy="38" r="1.5" fill="oklch(0.9 0.13 145)" />
             </g>
+
           </>
         )}
 
