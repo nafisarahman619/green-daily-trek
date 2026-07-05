@@ -24,7 +24,12 @@ type Row = {
   user_id: string;
   display_name: string;
   avatar_emoji: string;
+  avatar_url: string | null;
+  avatar_signed: string | null;
   total_co2: number;
+  good_days: number;
+  score: number;
+};
   good_days: number;
   score: number;
 };
