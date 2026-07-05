@@ -332,7 +332,24 @@ export function Creature({ id, variant = 1 }: { id: string; variant?: 1 | 2 | 3 
           <circle cx="56" cy="30" r="1.5" fill={TRUNK_DARK} />
         </svg>
       );
+    case "owl":
+      return (
+        <svg viewBox="0 0 50 50" style={{ width: 44, height: 44, overflow: "visible" }}>
+          <ellipse cx="25" cy="30" rx="14" ry="16" fill="oklch(0.35 0.04 60)" />
+          <path d="M13 18 L18 10 L20 18 Z" fill="oklch(0.32 0.04 60)" />
+          <path d="M37 18 L32 10 L30 18 Z" fill="oklch(0.32 0.04 60)" />
+          <circle cx="19" cy="24" r="5" fill="oklch(0.95 0.05 80)" />
+          <circle cx="31" cy="24" r="5" fill="oklch(0.95 0.05 80)" />
+          <circle cx="19" cy="24" r="2.2" fill={TRUNK_DARK} />
+          <circle cx="31" cy="24" r="2.2" fill={TRUNK_DARK} />
+          <circle cx="19.6" cy="23.4" r="0.7" fill="white" />
+          <circle cx="31.6" cy="23.4" r="0.7" fill="white" />
+          <path d="M22 29 L25 32 L28 29 Z" fill="oklch(0.7 0.16 55)" />
+          <path d="M14 40 Q18 44 22 40 M28 40 Q32 44 36 40" stroke="oklch(0.28 0.04 60)" strokeWidth="1" fill="none" opacity="0.6" />
+        </svg>
+      );
     default:
       return null;
   }
 }
+

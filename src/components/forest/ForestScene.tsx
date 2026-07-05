@@ -404,7 +404,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
 
       {/* Wildlife */}
       <AnimatePresence>
-        {unlockedSpecies.includes("butterfly") &&
+        {tod !== "night" && unlockedSpecies.includes("butterfly") &&
           ([
             { left: "22%", bottom: "22%", variant: 1 as const, xPath: [0, 30, 10, 40, 0], yPath: [0, -12, 6, -8, 0], dur: 12 },
             { left: "55%", bottom: "14%", variant: 2 as const, xPath: [0, -25, 15, -10, 0], yPath: [0, 8, -14, 4, 0], dur: 14 },
@@ -427,7 +427,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
               </div>
             </motion.div>
           ))}
-        {unlockedSpecies.includes("bird") && (
+        {tod !== "night" && unlockedSpecies.includes("bird") && (
           <motion.div
             key="bird"
             className="absolute"
@@ -450,6 +450,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
             </motion.div>
           </motion.div>
         )}
+
         {unlockedSpecies.includes("rabbit") && (
           <motion.div
             key="rab"
@@ -481,19 +482,57 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
             </div>
           </motion.div>
         )}
-        {unlockedSpecies.includes("firefly") &&
-          [0, 1, 2, 3].map((i) => (
+        {tod === "night" && unlockedSpecies.includes("firefly") &&
+          [0, 1, 2, 3, 4, 5].map((i) => (
             <motion.div
               key={`ff-${i}`}
               className="absolute"
-              style={{ left: `${30 + i * 15}%`, bottom: `${28 + (i % 2) * 12}%`, zIndex: 200 }}
-              animate={{ x: [0, 12, -8, 6, 0], y: [0, -10, -4, -14, 0] }}
+              style={{ left: `${15 + i * 13}%`, bottom: `${22 + (i % 3) * 10}%`, zIndex: 200 }}
+              animate={{ x: [0, 14, -10, 6, 0], y: [0, -12, -4, -16, 0], opacity: [0.4, 1, 0.6, 1, 0.4] }}
               transition={{ duration: 6 + i, repeat: Infinity, ease: "easeInOut", delay: i * 0.4 }}
             >
               <Creature id="firefly" />
             </motion.div>
           ))}
+        {tod === "night" && unlockedSpecies.includes("nightOwl") && (
+          <motion.div
+            key="owl"
+            className="absolute"
+            style={{ left: "18%", bottom: "42%", zIndex: 195 }}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: [0, -2, 0] }}
+            transition={{ opacity: { duration: 0.8 }, y: { duration: 4, repeat: Infinity, ease: "easeInOut" } }}
+          >
+            <Creature id="owl" />
+          </motion.div>
+        )}
+        {tod === "night" && unlockedSpecies.includes("nightVisitor") && (
+          <>
+            <motion.div
+              key="night-fox"
+              className="absolute"
+              style={{ left: "62%", bottom: "8%", zIndex: 195, filter: "brightness(0.55) saturate(0.7)" }}
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 0.85, x: [0, 6, 0] }}
+              transition={{ opacity: { duration: 1 }, x: { duration: 8, repeat: Infinity, ease: "easeInOut" } }}
+            >
+              <Creature id="fox" />
+            </motion.div>
+            {[0, 1, 2, 3, 4].map((i) => (
+              <motion.div
+                key={`ffx-${i}`}
+                className="absolute"
+                style={{ left: `${55 + i * 7}%`, bottom: `${18 + (i % 2) * 8}%`, zIndex: 201 }}
+                animate={{ x: [0, 10, -6, 4, 0], y: [0, -8, -3, -12, 0], opacity: [0.3, 1, 0.5, 1, 0.3] }}
+                transition={{ duration: 5 + i * 0.7, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
+              >
+                <Creature id="firefly" />
+              </motion.div>
+            ))}
+          </>
+        )}
       </AnimatePresence>
+
 
       {/* Storm overlay */}
       <AnimatePresence>

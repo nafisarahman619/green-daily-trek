@@ -6,7 +6,7 @@ export interface Species {
   name: string;
   emoji: string;
   requirement: string;
-  test: (ctx: { totalLogs: number; goodDays: number; streak: number }) => boolean;
+  test: (ctx: { totalLogs: number; goodDays: number; streak: number; nightLogs: number }) => boolean;
 }
 
 export const SPECIES: Species[] = [
@@ -52,8 +52,23 @@ export const SPECIES: Species[] = [
     requirement: "20 low-emission days total",
     test: (c) => c.goodDays >= 20,
   },
+  {
+    id: "nightOwl",
+    name: "Night Owl",
+    emoji: "🦉",
+    requirement: "Log a trip during night hours (8pm–6am)",
+    test: (c) => c.nightLogs >= 1,
+  },
+  {
+    id: "nightVisitor",
+    name: "Exotic Night Visitors",
+    emoji: "🌙",
+    requirement: "Log 5 trips during night hours",
+    test: (c) => c.nightLogs >= 5,
+  },
 ];
 
-export function evaluateUnlocks(ctx: { totalLogs: number; goodDays: number; streak: number }): string[] {
+export function evaluateUnlocks(ctx: { totalLogs: number; goodDays: number; streak: number; nightLogs: number }): string[] {
   return SPECIES.filter((s) => s.test(ctx)).map((s) => s.id);
 }
+

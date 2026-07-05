@@ -28,13 +28,13 @@ export function useForestData() {
       const [logsRes, unlocksRes] = await Promise.all([
         supabase
           .from("transport_logs")
-          .select("co2_kg,log_date,mode")
+          .select("co2_kg,log_date,mode,created_at")
           .eq("user_id", userId!)
           .order("log_date", { ascending: false })
           .limit(200),
         supabase.from("wildlife_unlocks").select("species").eq("user_id", userId!),
       ]);
-      const logs = (logsRes.data ?? []) as { co2_kg: number; log_date: string; mode: string }[];
+      const logs = (logsRes.data ?? []) as { co2_kg: number; log_date: string; mode: string; created_at: string }[];
       const unlocked = new Set((unlocksRes.data ?? []).map((r: any) => r.species as string));
 
       // Aggregate by date
@@ -48,9 +48,14 @@ export function useForestData() {
         else break;
       }
       const totalCO2 = logs.reduce((s, l) => s + Number(l.co2_kg), 0);
+      const nightLogs = logs.filter((l) => {
+        const h = new Date(l.created_at).getHours();
+        return h >= 20 || h < 6;
+      }).length;
 
       // Sync unlocks
-      const shouldUnlock = evaluateUnlocks({ totalLogs: dates.length, goodDays, streak });
+      const shouldUnlock = evaluateUnlocks({ totalLogs: dates.length, goodDays, streak, nightLogs });
+
       const newlyUnlocked = shouldUnlock.filter((s) => !unlocked.has(s));
       if (newlyUnlocked.length > 0) {
         await supabase
