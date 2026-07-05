@@ -216,15 +216,42 @@ export function Pond() {
         <ellipse cx="150" cy="32" rx="10" ry="3" opacity="0.28" className="ripple-b" style={{ animationDelay: "1.2s" }} />
         <ellipse cx="105" cy="42" rx="4" ry="1.3" opacity="0.5" className="ripple-a" style={{ animationDelay: "2.2s" }} />
       </g>
-      {/* Lily pads */}
+      {/* Lily pads with blossoms */}
       <g>
-        <ellipse cx="88" cy="38" rx="9" ry="4" fill="oklch(0.5 0.14 145)" />
-        <path d="M88 38 L96 36" stroke="oklch(0.32 0.08 145)" strokeWidth="0.6" opacity="0.7" />
-        <circle cx="86" cy="36" r="1.6" fill="oklch(0.92 0.1 0)" opacity="0.85" />
-        <ellipse cx="128" cy="34" rx="8" ry="3.5" fill="oklch(0.55 0.14 145)" />
-        <path d="M128 34 L120 32" stroke="oklch(0.32 0.08 145)" strokeWidth="0.6" opacity="0.7" />
-        <ellipse cx="160" cy="40" rx="7" ry="3" fill="oklch(0.48 0.13 145)" />
+        {/* Pad 1 (left) with pink blossom */}
+        <ellipse cx="70" cy="38" rx="15" ry="6.5" fill="oklch(0.5 0.14 145)" />
+        <path d="M70 38 L78 34" stroke="oklch(0.42 0.12 145)" strokeWidth="1.2" opacity="0.85" />
+        <g transform="translate(66 34)">
+          <ellipse cx="0" cy="0" rx="3.6" ry="2.2" fill="oklch(0.88 0.13 20)" />
+          <ellipse cx="-2.6" cy="-0.6" rx="1.8" ry="2" fill="oklch(0.92 0.11 10)" />
+          <ellipse cx="2.6" cy="-0.6" rx="1.8" ry="2" fill="oklch(0.92 0.11 10)" />
+          <ellipse cx="0" cy="-2.4" rx="1.8" ry="2" fill="oklch(0.95 0.08 20)" />
+          <circle cx="0" cy="-0.4" r="0.9" fill="oklch(0.92 0.15 90)" />
+        </g>
+
+        {/* Pad 2 (center) with white blossom */}
+        <ellipse cx="120" cy="32" rx="13" ry="5.5" fill="oklch(0.55 0.14 145)" />
+        <path d="M120 32 L112 30" stroke="oklch(0.42 0.12 145)" strokeWidth="1.2" opacity="0.85" />
+        <g transform="translate(124 30)">
+          <ellipse cx="0" cy="0" rx="3.2" ry="2" fill="oklch(0.97 0.02 100)" />
+          <ellipse cx="-2.4" cy="-0.5" rx="1.6" ry="1.8" fill="oklch(0.98 0.02 100)" />
+          <ellipse cx="2.4" cy="-0.5" rx="1.6" ry="1.8" fill="oklch(0.98 0.02 100)" />
+          <ellipse cx="0" cy="-2.1" rx="1.6" ry="1.8" fill="oklch(0.98 0.02 100)" />
+          <circle cx="0" cy="-0.3" r="0.9" fill="oklch(0.9 0.18 90)" />
+        </g>
+
+        {/* Pad 3 (right) with pink blossom */}
+        <ellipse cx="160" cy="40" rx="12" ry="5" fill="oklch(0.48 0.13 145)" />
+        <path d="M160 40 L152 38" stroke="oklch(0.42 0.12 145)" strokeWidth="1.2" opacity="0.85" />
+        <g transform="translate(164 37)">
+          <ellipse cx="0" cy="0" rx="3" ry="1.9" fill="oklch(0.86 0.13 15)" />
+          <ellipse cx="-2.2" cy="-0.5" rx="1.5" ry="1.7" fill="oklch(0.9 0.11 10)" />
+          <ellipse cx="2.2" cy="-0.5" rx="1.5" ry="1.7" fill="oklch(0.9 0.11 10)" />
+          <ellipse cx="0" cy="-2" rx="1.5" ry="1.7" fill="oklch(0.94 0.08 20)" />
+          <circle cx="0" cy="-0.3" r="0.8" fill="oklch(0.92 0.15 90)" />
+        </g>
       </g>
+
     </svg>
   );
 }
