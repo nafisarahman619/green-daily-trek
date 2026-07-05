@@ -23,7 +23,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div
       data-forest-theme={tier}
-      className="relative min-h-screen"
+      className="relative min-h-screen w-full overflow-x-clip"
       style={{ background: "var(--canvas)" }}
     >
       <ThemeDecorations tier={tier} />
