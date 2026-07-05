@@ -427,7 +427,29 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
               </div>
             </motion.div>
           ))}
-        {unlockedSpecies.includes("bird") && <PerchingBird />}
+        {unlockedSpecies.includes("bird") && (
+          <motion.div
+            key="bird"
+            className="absolute"
+            style={{ top: "28%", left: 0, right: 0, zIndex: 200, pointerEvents: "none" }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ opacity: { duration: 0.6 } }}
+          >
+            <motion.div
+              style={{ position: "absolute", top: 0, willChange: "left" }}
+              animate={{ left: ["-8%", "108%"] }}
+              transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
+            >
+              <motion.div
+                animate={{ y: [0, -14, 4, -10, 0] }}
+                transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <Creature id="bird" />
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
         {unlockedSpecies.includes("rabbit") && (
           <motion.div
             key="rab"
@@ -503,95 +525,6 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
         )}
       </AnimatePresence>
     </div>
-  );
-}
-
-/**
- * Bird that perches on treetops and occasionally flies to a new perch.
- * No continuous screen crossing — brief hops between perch points, then idle.
- */
-function PerchingBird() {
-  // Perch spots roughly at treetop heights across the scene.
-  const perches = useMemo(
-    () => [
-      { left: "18%", bottom: "42%" },
-      { left: "42%", bottom: "48%" },
-      { left: "66%", bottom: "44%" },
-      { left: "82%", bottom: "50%" },
-      { left: "30%", bottom: "38%" },
-    ],
-    []
-  );
-  const [idx, setIdx] = useState(0);
-  const [flying, setFlying] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    const cycle = () => {
-      // Perch dwell time
-      const dwell = 4500 + Math.random() * 3500;
-      const t1 = setTimeout(() => {
-        if (cancelled) return;
-        setFlying(true);
-        // Short flight duration
-        const t2 = setTimeout(() => {
-          if (cancelled) return;
-          setIdx((i) => {
-            let n = i;
-            while (n === i) n = Math.floor(Math.random() * perches.length);
-            return n;
-          });
-          setFlying(false);
-          cycle();
-        }, 1400);
-        timers.push(t2);
-      }, dwell);
-      timers.push(t1);
-    };
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    cycle();
-    return () => {
-      cancelled = true;
-      timers.forEach(clearTimeout);
-    };
-  }, [perches.length]);
-
-  const perch = perches[idx];
-
-  return (
-    <motion.div
-      key="bird"
-      className="absolute"
-      style={{ zIndex: 200, pointerEvents: "none" }}
-      initial={{ opacity: 0, left: perch.left, bottom: perch.bottom }}
-      animate={{
-        opacity: 1,
-        left: perch.left,
-        bottom: perch.bottom,
-      }}
-      transition={{
-        opacity: { duration: 0.6 },
-        left: { duration: 1.3, ease: "easeInOut" },
-        bottom: { duration: 1.3, ease: [0.4, -0.2, 0.6, 1.2] },
-      }}
-    >
-      {/* Idle motion while perched: subtle head/body shift. Flight arc while moving. */}
-      <motion.div
-        animate={
-          flying
-            ? { y: [0, -10, -4, -8, 0], rotate: [0, -3, 2, -2, 0] }
-            : { y: [0, -1.2, 0, 0.6, 0], rotate: [0, 1, 0, -1, 0] }
-        }
-        transition={
-          flying
-            ? { duration: 1.3, ease: "easeInOut" }
-            : { duration: 3.4, repeat: Infinity, ease: "easeInOut" }
-        }
-        style={{ transformOrigin: "center" }}
-      >
-        <Creature id="bird" />
-      </motion.div>
-    </motion.div>
   );
 }
 
