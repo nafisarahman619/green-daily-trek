@@ -474,7 +474,14 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
             </div>
           </motion.div>
         )}
-{/* Fox removed: was rendering inside the pond area and reading as a brown blob on the water. */}
+        {unlockedSpecies.includes("fox") && (
+          <motion.div key="fox" className="absolute" style={{ left: "78%", bottom: "6%", zIndex: 190 }} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }}>
+            <div style={{ position: "relative" }}>
+              <div aria-hidden style={{ position: "absolute", left: "50%", bottom: -4, width: 56, height: 10, transform: "translateX(-50%)", background: "radial-gradient(ellipse at center, oklch(0.15 0.04 60 / 0.32), transparent 70%)", filter: "blur(2px)" }} />
+              <Creature id="fox" />
+            </div>
+          </motion.div>
+        )}
 
         {tod === "night" &&
           [0, 1, 2, 3, 4, 5].map((i) => (
