@@ -60,13 +60,7 @@ export const SPECIES: Species[] = [
     requirement: "Log night trips (8pm–6am) on 7 different days",
     test: (c) => c.nightDays >= 7,
   },
-  {
-    id: "nightVisitor",
-    name: "Exotic Night Visitors",
-    emoji: "🌙",
-    requirement: "Log 5 trips during night hours",
-    test: (c) => c.nightLogs >= 5,
-  },
+
 ];
 
 export function evaluateUnlocks(ctx: { totalLogs: number; goodDays: number; streak: number; nightLogs: number; nightDays: number }): string[] {
