@@ -416,6 +416,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
               style={{ left: b.left, bottom: b.bottom, zIndex: 200 }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, x: b.xPath, y: b.yPath }}
+              exit={{ opacity: 0, x: 0, y: 0, transition: { duration: 0.25 } }}
               transition={{
                 opacity: { duration: 0.6 },
                 x: { duration: b.dur, repeat: Infinity, ease: "easeInOut" },
@@ -434,6 +435,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
             style={{ top: "28%", left: 0, right: 0, zIndex: 200, pointerEvents: "none" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.25 } }}
             transition={{ opacity: { duration: 0.6 } }}
           >
             <motion.div
@@ -450,6 +452,7 @@ export function ForestScene({ health, unlockedSpecies, compact }: ForestScenePro
             </motion.div>
           </motion.div>
         )}
+
 
         {unlockedSpecies.includes("rabbit") && (
           <motion.div
