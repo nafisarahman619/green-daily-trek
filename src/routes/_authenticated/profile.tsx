@@ -7,8 +7,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { SPECIES } from "@/lib/wildlife";
 import { useTheme, useSoundPref, dailyMotivation } from "@/lib/preferences";
-import { Sun, Moon, Volume2, VolumeX, LogOut, Trash2, Info, Award, Sparkles } from "lucide-react";
+import { Sun, Moon, Volume2, VolumeX, LogOut, Trash2, Info, Award, Sparkles, Camera, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { AVATAR_ACCEPT, AVATAR_BUCKET, AVATAR_MAX_BYTES, signAvatarUrl } from "@/lib/avatars";
+import { useRef } from "react";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
