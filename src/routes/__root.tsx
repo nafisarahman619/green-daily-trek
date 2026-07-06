@@ -10,7 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+
 import { Toaster } from "sonner";
 import { AmbientSound } from "@/components/AmbientSound";
 import "@fontsource/fraunces/400.css";
@@ -45,9 +45,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -85,18 +82,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "your carbon tracker" },
-      { name: "description", content: "Log daily travel to grow a virtual forest and visualize your carbon footprint." },
-      { name: "author", content: "Lovable" },
+      { title: "Green Daily Trek" },
+      {
+        name: "description",
+        content: "Log daily travel to grow a virtual forest and visualize your carbon footprint.",
+      },
+      { name: "author", content: "Johana" },
       { property: "og:title", content: "your carbon tracker" },
-      { property: "og:description", content: "Log daily travel to grow a virtual forest and visualize your carbon footprint." },
+      {
+        property: "og:description",
+        content: "Log daily travel to grow a virtual forest and visualize your carbon footprint.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "your carbon tracker" },
-      { name: "twitter:description", content: "Log daily travel to grow a virtual forest and visualize your carbon footprint." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/75326549-90bf-45be-9002-d6b3ca1a898a/id-preview-c1dd4523--5ca8ab78-95d8-4b89-a061-8bc551d0fd1f.lovable.app-1783020007462.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/75326549-90bf-45be-9002-d6b3ca1a898a/id-preview-c1dd4523--5ca8ab78-95d8-4b89-a061-8bc551d0fd1f.lovable.app-1783020007462.png" },
+      {
+        name: "twitter:description",
+        content: "Log daily travel to grow a virtual forest and visualize your carbon footprint.",
+      },
     ],
     links: [
       {
