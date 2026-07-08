@@ -140,7 +140,11 @@ function RootComponent() {
     const stored = localStorage.getItem("cff.theme");
     if (stored === "dark") document.documentElement.classList.add("dark");
     else document.documentElement.classList.remove("dark");
+
+    // Register service worker (guarded: production + not in Lovable preview).
+    import("@/lib/register-sw").then((m) => m.registerServiceWorker());
   }, []);
+
 
   return (
     <QueryClientProvider client={queryClient}>
