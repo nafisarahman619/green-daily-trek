@@ -29,6 +29,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <ThemeDecorations tier={tier} />
       <div className="relative z-10">
 
+
       <header className="sticky top-0 z-40 backdrop-blur-md" style={{ background: "color-mix(in oklab, var(--canvas) 78%, transparent)", borderBottom: "1px solid var(--border)" }}>
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
           <Link to="/app" className="flex items-center gap-2">
