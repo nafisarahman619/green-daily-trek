@@ -34,6 +34,45 @@ function ProfilePage() {
   const [resetting, setResetting] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportCSV = async () => {
+    setExporting(true);
+    try {
+      const uid = data!.userId;
+      const { data: rows, error } = await supabase
+        .from("transport_logs")
+        .select("log_date, mode, distance_km, trips, co2_kg, created_at")
+        .eq("user_id", uid)
+        .order("log_date", { ascending: false })
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      const header = ["log_date", "mode", "distance_km", "trips", "co2_kg", "created_at"];
+      const esc = (v: any) => {
+        const s = v == null ? "" : String(v);
+        return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+      };
+      const csv = [
+        header.join(","),
+        ...(rows ?? []).map((r: any) => header.map((h) => esc(r[h])).join(",")),
+      ].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const today = new Date().toISOString().slice(0, 10);
+      a.href = url;
+      a.download = `forest-emissions-${today}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toast.success(`Exported ${rows?.length ?? 0} trip${rows?.length === 1 ? "" : "s"}.`);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not export your data.");
+    } finally {
+      setExporting(false);
+    }
+  };
 
   useEffect(() => {
     (async () => {
