@@ -309,16 +309,6 @@ function ProfilePage() {
             </button>
             <button
               type="button"
-              onClick={handleExportCSV}
-              disabled={exporting}
-              className="btn-ghost-delft"
-              style={{ padding: "0.7rem 1.1rem" }}
-            >
-              {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-              Export CSV
-            </button>
-            <button
-              type="button"
               onClick={() => setConfirmReset(true)}
               className="inline-flex items-center justify-center gap-2 rounded-full px-4 py-3 text-sm font-bold transition-colors"
               style={{
@@ -331,7 +321,7 @@ function ProfilePage() {
             </button>
           </div>
           <p className="mt-3 text-[12px]" style={{ color: "var(--ink-soft)" }}>
-            Download your full trip history as CSV, or reset to start fresh. Resetting cannot be undone.
+            Resetting cannot be undone.
           </p>
         </section>
       </div>
