@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { SPECIES } from "@/lib/wildlife";
 import { useTheme, useSoundPref, dailyMotivation } from "@/lib/preferences";
-import { Sun, Moon, Volume2, VolumeX, LogOut, Trash2, Info, Award, Sparkles, Camera, Loader2, Download } from "lucide-react";
+import { Sun, Moon, Volume2, VolumeX, LogOut, Trash2, Info, Award, Sparkles, Camera, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { AVATAR_ACCEPT, AVATAR_BUCKET, AVATAR_MAX_BYTES, signAvatarUrl } from "@/lib/avatars";
 import { useRef } from "react";
@@ -34,46 +34,6 @@ function ProfilePage() {
   const [resetting, setResetting] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [exporting, setExporting] = useState(false);
-
-  const handleExportCSV = async () => {
-    setExporting(true);
-    try {
-      const uid = data!.userId;
-      const { data: rows, error } = await supabase
-        .from("transport_logs")
-        .select("log_date, mode, distance_km, trips, co2_kg, created_at")
-        .eq("user_id", uid)
-        .order("log_date", { ascending: false })
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      const header = ["log_date", "mode", "distance_km", "trips", "co2_kg", "created_at"];
-      const esc = (v: any) => {
-        const s = v == null ? "" : String(v);
-        return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-      };
-      const csv = [
-        header.join(","),
-        ...(rows ?? []).map((r: any) => header.map((h) => esc(r[h])).join(",")),
-      ].join("\n");
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      const today = new Date().toISOString().slice(0, 10);
-      a.href = url;
-      a.download = `forest-emissions-${today}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-      toast.success(`Exported ${rows?.length ?? 0} trip${rows?.length === 1 ? "" : "s"}.`);
-    } catch (e: any) {
-      toast.error(e?.message ?? "Could not export your data.");
-    } finally {
-      setExporting(false);
-    }
-  };
-
   useEffect(() => {
     (async () => {
       const { data: user } = await supabase.auth.getUser();
@@ -349,16 +309,6 @@ function ProfilePage() {
             </button>
             <button
               type="button"
-              onClick={handleExportCSV}
-              disabled={exporting}
-              className="btn-ghost-delft"
-              style={{ padding: "0.7rem 1.1rem" }}
-            >
-              {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-              Export CSV
-            </button>
-            <button
-              type="button"
               onClick={() => setConfirmReset(true)}
               className="inline-flex items-center justify-center gap-2 rounded-full px-4 py-3 text-sm font-bold transition-colors"
               style={{
@@ -371,7 +321,7 @@ function ProfilePage() {
             </button>
           </div>
           <p className="mt-3 text-[12px]" style={{ color: "var(--ink-soft)" }}>
-            Download your full trip history as CSV, or reset to start fresh. Resetting cannot be undone.
+            Resetting cannot be undone.
           </p>
         </section>
       </div>
