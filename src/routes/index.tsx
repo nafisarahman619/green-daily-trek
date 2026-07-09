@@ -80,7 +80,7 @@ function Landing() {
           </motion.div>
           <div className="mt-8 flex flex-wrap items-center gap-6 text-xs" style={{ color: "var(--ink-soft)" }}>
             <span>🌱 4kg/day baseline</span>
-            <span>🦋 6 unlockable species</span>
+            <span>🦋 12 unlockable species</span>
             <span>🌦️ Storm-and-recover, never guilt</span>
           </div>
         </div>
