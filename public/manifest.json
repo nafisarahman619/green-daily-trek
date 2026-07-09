@@ -1,7 +1,7 @@
 {
   "name": "Green Daily Trek",
   "short_name": "GreenTrek",
-  "start_url": "/app",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#16a34a",
