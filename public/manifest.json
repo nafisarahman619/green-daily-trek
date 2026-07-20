@@ -1,6 +1,6 @@
 {
-  "name": "Green Daily Trek",
-  "short_name": "GreenTrek",
+  "name": "CO2 Tracker",
+  "short_name": "CO2Tracker",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
