@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 export const Route = createFileRoute("/_authenticated/history")({
   head: () => ({
     meta: [
-      { title: "History — Carbon Footprint Forest" },
+      { title: "History — CO2 Tracker" },
       { name: "description", content: "Every day, every trip, every leaf." },
     ],
   }),
