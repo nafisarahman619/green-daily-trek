@@ -40,7 +40,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <Leaf className="h-5 w-5" style={{ color: "white" }} />
             </div>
             <span className="display text-lg" style={{ color: "var(--delft-deep)" }}>
-              Carbon Forest
+              CO2 Tracker
             </span>
           </Link>
           <nav className="hidden items-center gap-1 md:flex">
