@@ -13,9 +13,9 @@ export const Route = createFileRoute("/")({
   },
   head: () => ({
     meta: [
-      { title: "Carbon Footprint Forest — grow a forest with every trip" },
+      { title: "CO2 Tracker — grow a forest with every trip" },
       { name: "description", content: "Log daily transport. Watch a hand-drawn forest live and breathe with your carbon footprint." },
-      { property: "og:title", content: "Carbon Footprint Forest" },
+      { property: "og:title", content: "CO2 Tracker" },
       { property: "og:description", content: "Turn everyday transport into a living forest." },
     ],
   }),
@@ -34,7 +34,7 @@ function Landing() {
           >
             <Leaf className="h-5 w-5" style={{ color: "white" }} />
           </div>
-          <span className="display text-lg" style={{ color: "var(--delft-deep)" }}>Carbon Forest</span>
+          <span className="display text-lg" style={{ color: "var(--delft-deep)" }}>CO2 Tracker</span>
         </div>
         <Link to="/auth" className="btn-fern" style={{ padding: "0.55rem 1.1rem", fontSize: "0.85rem" }}>
           Enter forest
