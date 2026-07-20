@@ -11,9 +11,9 @@ import { z } from "zod";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — Carbon Footprint Forest" },
+      { title: "Sign in — CO2 Tracker" },
       { name: "description", content: "Start your forest journey. Log daily transport, watch your personal ecosystem grow." },
-      { property: "og:title", content: "Carbon Footprint Forest — sign in" },
+      { property: "og:title", content: "CO2 Tracker — sign in" },
       { property: "og:description", content: "Turn everyday transport into a living forest." },
     ],
   }),
@@ -89,7 +89,7 @@ function AuthPage() {
       <div className="mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center gap-10 px-4 py-10 md:flex-row md:justify-between">
         {/* Left — brand + illustration */}
         <div className="max-w-md text-center md:text-left">
-          <Link to="/" className="chip-blue mb-6 inline-flex"><Leaf className="h-3.5 w-3.5" /> Carbon Footprint Forest</Link>
+          <Link to="/" className="chip-blue mb-6 inline-flex"><Leaf className="h-3.5 w-3.5" /> CO2 Tracker</Link>
           <h1 className="display text-4xl leading-tight md:text-5xl">
             Every trip you take grows a <span style={{ color: "var(--fern)" }}>living forest</span>.
           </h1>
