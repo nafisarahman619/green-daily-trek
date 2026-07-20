@@ -15,7 +15,7 @@ import { TreesToPlantCard } from "@/components/forest/TreesToPlantCard";
 export const Route = createFileRoute("/_authenticated/app")({
   head: () => ({
     meta: [
-      { title: "Your Forest — Carbon Footprint Forest" },
+      { title: "Your Forest — CO2 Tracker" },
       { name: "description", content: "Your living forest, powered by how you moved today." },
     ],
   }),
