@@ -12,7 +12,7 @@ import { Sparkles } from "lucide-react";
 export const Route = createFileRoute("/_authenticated/log")({
   head: () => ({
     meta: [
-      { title: "Log today — Carbon Footprint Forest" },
+      { title: "Log today — CO2 Tracker" },
       { name: "description", content: "Add today's trips. Watch your forest respond." },
     ],
   }),
