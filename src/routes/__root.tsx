@@ -82,7 +82,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Green Daily Trek" },
+      { title: "CO2 Tracker" },
       {
         name: "description",
         content: "Log daily travel to grow a virtual forest and visualize your carbon footprint.",
