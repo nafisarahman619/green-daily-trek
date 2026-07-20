@@ -15,7 +15,7 @@ import { useRef } from "react";
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
     meta: [
-      { title: "Profile — Carbon Footprint Forest" },
+      { title: "Profile — CO2 Tracker" },
       { name: "description", content: "Your badges, preferences, and account settings." },
     ],
   }),
@@ -284,10 +284,10 @@ function ProfilePage() {
         <section className="surface-card p-6 md:col-span-2">
           <div className="flex items-center gap-2">
             <Info className="h-5 w-5" style={{ color: "var(--delft)" }} />
-            <h2 className="display text-xl">About Carbon Footprint Forest</h2>
+            <h2 className="display text-xl">About CO2 Tracker</h2>
           </div>
           <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--ink-soft)" }}>
-            Carbon Footprint Forest turns your daily travel into a living scene. Log how
+            CO2 Tracker turns your daily travel into a living forest. Log how
             you moved — walked, cycled, took the metro, drove — and the app estimates the
             CO₂ of your trips. Lower-emission days keep your forest healthy: trees flourish,
             wildlife arrives, and the pond stays clear. It's a warm, non-preachy way to
