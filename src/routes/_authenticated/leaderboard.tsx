@@ -13,7 +13,7 @@ import { signAvatarUrls } from "@/lib/avatars";
 export const Route = createFileRoute("/_authenticated/leaderboard")({
   head: () => ({
     meta: [
-      { title: "Leaderboard — Carbon Footprint Forest" },
+      { title: "Leaderboard — CO2 Tracker" },
       { name: "description", content: "See whose forest is thriving." },
     ],
   }),
